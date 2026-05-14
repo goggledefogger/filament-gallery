@@ -156,6 +156,26 @@
     .badge-htpla { background: #2a1e40; color: #b07ef8; }
     .badge-petg  { background: #1a2e3a; color: #4fc3f7; }
 
+    .card-detail {
+      margin-top: 6px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .status-dot.in-ams  { background: #5dd49a; box-shadow: 0 0 6px #5dd49a88; }
+    .status-dot.open    { background: #4fc3f7; }
+    .status-dot.sealed  { background: #b07ef8; }
+    .status-dot.low     { background: #ffd54f; }
+    .status-dot.empty   { background: #ef5350; }
+
     .count {
       text-align: center;
       color: var(--muted);
@@ -189,26 +209,26 @@
 // ─── FILAMENT DATA ────────────────────────────────────────────────────────────
 // AUTO-GENERATED — edit via scripts/publish-filament-gallery.py
 const FILAMENTS = [
-  { name: "Candy Almandine Red", material: "HTPLA", image: "images/protopasta-candy-almandine-red-htpla.jpg" },
-  { name: "Ecto Ooze Green", material: "HTPLA", image: "images/protopasta-ecto-ooze-green-htpla.png" },
-  { name: "Fading Rainbow Multicolor", material: "HTPLA", image: "images/protopasta-fading-rainbow-multicolor-htpla.png" },
-  { name: "Glitter's Mane Teal", material: "HTPLA", image: "images/protopasta-glitters-mane-teal-htpla.jpg" },
-  { name: "Green Glow-in-the-Dark White", material: "HTPLA", image: "images/protopasta-green-glow-dark-white-htpla.png" },
-  { name: "Lapis Lazuli", material: "HTPLA", image: "images/protopasta-lapis-lazuli-htpla.png" },
-  { name: "Matte Fiber Black", material: "HTPLA", image: "images/protopasta-matte-fiber-black-htpla.jpg" },
-  { name: "Red Hot Cinnamon", material: "HTPLA", image: null },
-  { name: "Tropical Punk Green", material: "HTPLA", image: "images/protopasta-tropical-punk-green-htpla.png" },
-  { name: "Black PETG", material: "PETG", image: "images/protopasta-black-petg.jpg" },
-  { name: "Black Recycled", material: "PLA", image: "images/protopasta-black-recycled-pla.jpg" },
-  { name: "Brown", material: "PLA", image: null },
-  { name: "Natural", material: "PLA", image: "images/protopasta-natural-pla.jpg" },
-  { name: "Orange (bundled with printer)", material: "PLA", image: null },
-  { name: "Still Colorful G32 Recycled", material: "PLA", image: "images/protopasta-still-colorful-g32-recycled-pla.png" },
-  { name: "Still Colorful O31 Recycled", material: "PLA", image: "images/protopasta-still-colorful-o31-recycled-pla.png" },
-  { name: "Still Colorful Recycled", material: "PLA", image: "images/protopasta-still-colorful-o31-recycled-pla.png" },
-  { name: "Unknown Dark", material: "PLA", image: null },
-  { name: "White", material: "PLA", image: "images/protopasta-white-pla.jpg" },
-  { name: "Support for PLA/PETG", material: "Support", image: null },
+  { name: "Candy Almandine Red", material: "HTPLA", image: "images/protopasta-candy-almandine-red-htpla.jpg", weight: "500g", status: "sealed", spool: "full" },
+  { name: "Ecto Ooze Green", material: "HTPLA", image: "images/protopasta-ecto-ooze-green-htpla.png", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Fading Rainbow Multicolor", material: "HTPLA", image: "images/protopasta-fading-rainbow-multicolor-htpla.png", weight: "500g", status: "sealed", spool: "full" },
+  { name: "Glitter's Mane Teal", material: "HTPLA", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Green Glow-in-the-Dark White", material: "HTPLA", image: "images/protopasta-green-glow-dark-white-htpla.png", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Lapis Lazuli", material: "HTPLA", image: "images/protopasta-lapis-lazuli-htpla.png", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Matte Fiber Black", material: "HTPLA", image: "images/protopasta-matte-fiber-black-htpla.jpg", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Red Hot Cinnamon", material: "HTPLA", image: "images/protopasta-red-hot-cinnamon-htpla.png", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Tropical Punk Green", material: "HTPLA", image: "images/protopasta-tropical-punk-green-htpla.png", weight: "500g", status: "sealed", spool: "full" },
+  { name: "Black PETG", material: "PETG", image: "images/protopasta-black-petg.jpg", weight: "1000g", status: "in-ams", spool: "full" },
+  { name: "Black Recycled", material: "PLA", image: "images/protopasta-black-recycled-pla.jpg", weight: "1000g", status: "open", spool: "full" },
+  { name: "Brown", material: "PLA", image: "images/protopasta-chocolate-eruption-brown-htpla.png", weight: "50g", status: "in-ams", spool: "sample" },
+  { name: "Natural", material: "PLA", image: "images/protopasta-natural-pla.jpg", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Orange (bundled with printer)", material: "PLA", image: null, weight: "1000g", status: "open", spool: "full" },
+  { name: "Still Colorful G32 Recycled", material: "PLA", image: "images/protopasta-still-colorful-032-recycled-pla.png", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Still Colorful O31 Recycled", material: "PLA", image: "images/protopasta-still-colorful-031-recycled-pla.png", weight: "1000g", status: "sealed", spool: "full" },
+  { name: "Still Colorful Recycled", material: "PLA", image: "images/protopasta-still-colorful-033-recycled-pla.png", weight: "500g", status: "in-ams", spool: "full" },
+  { name: "Unknown Dark", material: "PLA", image: null, weight: "1000g", status: "low", spool: "remnant" },
+  { name: "White", material: "PLA", image: "images/protopasta-white-pla.jpg", weight: "50g", status: "sealed", spool: "sample" },
+  { name: "Support for PLA/PETG", material: "Support", image: null, weight: "500g", status: "sealed", spool: "full" },
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -227,6 +247,9 @@ function render(filter = "all") {
   const order = ["PLA", "HTPLA", "PETG"];
   let total = 0;
 
+  const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "low": "Low", "empty": "Empty" };
+  const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
+
   order.forEach(mat => {
     const items = groups[mat];
     if (!items) return;
@@ -242,6 +265,13 @@ function render(filter = "all") {
     items.forEach(f => {
       const card = document.createElement("div");
       card.className = "card";
+
+      const statusDot = f.status ? `<span class="status-dot ${f.status}"></span>` : "";
+      const statusLabel = f.status ? (STATUS_LABELS[f.status] || f.status) : "";
+      const weightLabel = f.weight || "";
+      const spoolLabel = f.spool ? (SPOOL_LABELS[f.spool] || f.spool) : "";
+      const detailParts = [weightLabel, spoolLabel].filter(Boolean).join(" · ");
+
       card.innerHTML = `
         ${f.image
           ? `<img class="card-img" src="${f.image}" alt="${f.name}" loading="lazy" />`
@@ -250,7 +280,9 @@ function render(filter = "all") {
           <div class="card-name">${f.name}</div>
           <div class="card-meta">
             <span class="badge ${BADGE[f.material] || ''}">${f.material}</span>
+            ${statusDot ? `<span style="display:flex;align-items:center;gap:4px;">${statusDot}<span>${statusLabel}</span></span>` : ""}
           </div>
+          ${detailParts ? `<div class="card-detail">${detailParts}</div>` : ""}
         </div>`;
       grid.appendChild(card);
     });
