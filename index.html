@@ -410,8 +410,8 @@ function render(filter = "all") {
           <div class="card-meta">
             <span class="badge ${badgeClass}">${badgeLabel}</span>
             ${statusDot ? `<span style="display:flex;align-items:center;gap:4px;">${statusDot}<span>${statusLabel}</span></span>` : ""}
+            ${detailParts ? `<span style="margin-left: auto; text-align: right; opacity: 0.8;">${detailParts}</span>` : ""}
           </div>
-          ${detailParts ? `<div class="card-detail">${detailParts}</div>` : ""}
         </div>`;
       grid.appendChild(card);
     });
