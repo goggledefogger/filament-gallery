@@ -78,12 +78,11 @@
     }
 
     .section-label {
-      font-size: 0.72rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 32px 24px 12px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      padding: 32px 24px 16px;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -186,6 +185,23 @@
     @media (max-width: 480px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 16px; }
     }
+
+    /* Lightbox */
+    dialog#lightbox { margin: auto; border: none; background: transparent; padding: 0; max-width: 100vw; max-height: 100vh; overflow: visible; outline: none; }
+    dialog#lightbox::backdrop { background: rgba(10, 10, 14, 0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .lb-content { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .lb-content img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 10; }
+    .lb-nav:hover { background: var(--accent); }
+    #lb-prev { left: -60px; }
+    #lb-next { right: -60px; }
+    #lb-close { position: absolute; top: -40px; right: -40px; background: none; border: none; color: var(--muted); font-size: 32px; cursor: pointer; z-index: 10; }
+    #lb-close:hover { color: white; }
+    #lb-caption { margin-top: 16px; color: var(--text); font-weight: 500; font-size: 1.1rem; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    @media (max-width: 768px) {
+      #lb-prev { left: 10px; } #lb-next { right: 10px; }
+      #lb-close { top: 10px; right: 10px; color: white; background: rgba(0,0,0,0.5); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;}
+    }
   </style>
 </head>
 <body>
@@ -205,6 +221,16 @@
 <div id="gallery"></div>
 <p class="count" id="count"></p>
 
+<dialog id="lightbox">
+  <div class="lb-content">
+    <button id="lb-close">×</button>
+    <button class="lb-nav" id="lb-prev">‹</button>
+    <img id="lb-img" src="" alt="">
+    <button class="lb-nav" id="lb-next">›</button>
+    <div id="lb-caption"></div>
+  </div>
+</dialog>
+
 <script>
 // ─── FILAMENT DATA ────────────────────────────────────────────────────────────
 // AUTO-GENERATED — edit via scripts/publish-filament-gallery.py
@@ -222,7 +248,7 @@ const FILAMENTS = [
   { name: "Black Recycled", material: "PLA", image: "images/protopasta-black-recycled-pla.jpg", weight: "1000g", status: "open", spool: "full" },
   { name: "Brown", material: "PLA", image: "images/protopasta-chocolate-eruption-brown-htpla.png", weight: "50g", status: "in-ams", spool: "sample" },
   { name: "Natural", material: "PLA", image: "images/protopasta-natural-pla.jpg", weight: "50g", status: "sealed", spool: "sample" },
-  { name: "Orange (bundled with printer)", material: "PLA", image: null, weight: "1000g", status: "open", spool: "full" },
+  { name: "Orange (bundled with printer)", material: "PLA", image: "images/bambu-lab-orange-pla.webp", weight: "1000g", status: "open", spool: "full" },
   { name: "Still Colorful G32 Recycled", material: "PLA", image: "images/protopasta-still-colorful-032-recycled-pla.png", weight: "50g", status: "sealed", spool: "sample" },
   { name: "Still Colorful O31 Recycled", material: "PLA", image: "images/protopasta-still-colorful-031-recycled-pla.png", weight: "1000g", status: "sealed", spool: "full" },
   { name: "Still Colorful Recycled", material: "PLA", image: "images/protopasta-still-colorful-033-recycled-pla.png", weight: "500g", status: "in-ams", spool: "full" },
@@ -246,6 +272,8 @@ function render(filter = "all") {
 
   const order = ["PLA", "HTPLA", "PETG"];
   let total = 0;
+
+  let lbItems = [];
 
   const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "low": "Low", "empty": "Empty" };
   const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
@@ -272,10 +300,15 @@ function render(filter = "all") {
       const spoolLabel = f.spool ? (SPOOL_LABELS[f.spool] || f.spool) : "";
       const detailParts = [weightLabel, spoolLabel].filter(Boolean).join(" · ");
 
+      let imgTag = `<div class="card-img missing">🎨</div>`;
+      if (f.image) {
+        const idx = lbItems.length;
+        lbItems.push(f);
+        imgTag = `<img class="card-img lb-trigger" src="${f.image}" alt="${f.name}" data-idx="${idx}" loading="lazy" style="cursor: zoom-in;" />`;
+      }
+
       card.innerHTML = `
-        ${f.image
-          ? `<img class="card-img" src="${f.image}" alt="${f.name}" loading="lazy" />`
-          : `<div class="card-img missing">🎨</div>`}
+        ${imgTag}
         <div class="card-body">
           <div class="card-name">${f.name}</div>
           <div class="card-meta">
@@ -290,7 +323,53 @@ function render(filter = "all") {
   });
 
   document.getElementById("count").textContent = `${total} filament${total !== 1 ? "s" : ""}`;
+
+  // Attach lightbox listeners
+  document.querySelectorAll(".lb-trigger").forEach(img => {
+    img.onclick = (e) => {
+      e.stopPropagation();
+      openLightbox(parseInt(img.dataset.idx));
+    };
+  });
 }
+
+// Lightbox logic
+let lbIndex = 0;
+const lb = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+const lbCaption = document.getElementById("lb-caption");
+let currentLbItems = [];
+
+function openLightbox(index) {
+  // Grab current lbItems from the DOM state by re-querying or relying on a global
+  // Since lbItems is localized to render(), we need to pass it out or just rebuild it.
+  currentLbItems = [];
+  document.querySelectorAll(".lb-trigger").forEach(img => {
+    currentLbItems.push({ src: img.src, name: img.alt });
+  });
+  lbIndex = index;
+  updateLightbox();
+  lb.showModal();
+}
+
+function updateLightbox() {
+  if (!currentLbItems.length) return;
+  lbImg.src = currentLbItems[lbIndex].src;
+  lbCaption.textContent = currentLbItems[lbIndex].name;
+}
+
+function lbNext() { lbIndex = (lbIndex + 1) % currentLbItems.length; updateLightbox(); }
+function lbPrev() { lbIndex = (lbIndex - 1 + currentLbItems.length) % currentLbItems.length; updateLightbox(); }
+
+document.getElementById("lb-next").onclick = lbNext;
+document.getElementById("lb-prev").onclick = lbPrev;
+document.getElementById("lb-close").onclick = () => lb.close();
+lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+document.addEventListener("keydown", e => {
+  if (!lb.open) return;
+  if (e.key === "ArrowRight") lbNext();
+  if (e.key === "ArrowLeft") lbPrev();
+});
 
 document.querySelectorAll(".filter-btn").forEach(btn => {
   btn.addEventListener("click", () => {
