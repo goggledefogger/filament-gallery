@@ -164,37 +164,6 @@
       align-items: center;
       gap: 6px;
     }
-    .usage-bar-bg {
-      margin-top: 8px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .usage-bar-fill {
-      height: 100%;
-      background: var(--accent2);
-      border-radius: 2px;
-    }
-    .usage-text {
-      font-size: 0.65rem;
-      color: var(--muted);
-      margin-top: 4px;
-      text-align: right;
-      letter-spacing: 0.02em;
-    }
-    .status-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-    .status-dot.in-ams  { background: #5dd49a; box-shadow: 0 0 6px #5dd49a88; }
-    .status-dot.open    { background: #4fc3f7; }
-    .status-dot.sealed  { background: #b07ef8; }
-    .status-dot.low     { background: #ffd54f; }
-    .status-dot.empty   { background: #ef5350; }
-
     .spool-badge {
       position: absolute;
       top: 10px;
@@ -206,19 +175,41 @@
       color: white;
       padding: 6px 10px;
       border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.85rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       z-index: 5;
     }
-    .spool-badge svg {
-      color: var(--accent2);
+    .spool-badge svg { color: var(--accent2); }
+    .spool-badge.small svg { color: #b07ef8; }
+    
+    .spool-badge-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .spool-badge.small svg {
-      color: #b07ef8;
+    .spool-badge-weight {
+      font-weight: 600;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+    .spool-badge-weight small {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .spool-badge-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      overflow: hidden;
+      width: 100%;
+    }
+    .spool-badge-fill {
+      height: 100%;
+      background: var(--accent2);
+      border-radius: 2px;
     }
 
     .count {
@@ -356,19 +347,24 @@ function render(filter = "all") {
       if (weightNum <= 50) { iconSvg = ICON_COIL; sizeClass = "small"; }
       else if (weightNum <= 500) { sizeClass = "medium"; }
 
-      const spoolBadgeHtml = f.weight ? `<div class="spool-badge ${sizeClass}">${iconSvg}<span>${f.weight}</span></div>` : "";
-
-      let usageHtml = "";
-      if (f.used > 0 && f.weight) {
-        const weightNum = parseInt(f.weight);
-        if (weightNum > 0) {
+      let spoolBadgeHtml = "";
+      if (f.weight) {
+        if (f.used > 0 && weightNum > 0) {
           const percent = Math.max(0, Math.min(100, (f.remaining / weightNum) * 100));
-          usageHtml = `
-            <div class="usage-bar-bg">
-              <div class="usage-bar-fill" style="width: ${percent}%;"></div>
-            </div>
-            <div class="usage-text">${Math.round(f.remaining)}g left</div>
-          `;
+          spoolBadgeHtml = `
+            <div class="spool-badge ${sizeClass}">
+              ${iconSvg}
+              <div class="spool-badge-info">
+                <div class="spool-badge-weight">${Math.round(f.remaining)}g <small>/ ${weightNum}g</small></div>
+                <div class="spool-badge-bar"><div class="spool-badge-fill" style="width: ${percent}%;"></div></div>
+              </div>
+            </div>`;
+        } else {
+          spoolBadgeHtml = `
+            <div class="spool-badge ${sizeClass}">
+              ${iconSvg}
+              <div class="spool-badge-weight">${f.weight}</div>
+            </div>`;
         }
       }
 
@@ -389,7 +385,6 @@ function render(filter = "all") {
             ${statusDot ? `<span style="display:flex;align-items:center;gap:4px;">${statusDot}<span>${statusLabel}</span></span>` : ""}
           </div>
           ${detailParts ? `<div class="card-detail">${detailParts}</div>` : ""}
-          ${usageHtml}
         </div>`;
       grid.appendChild(card);
     });
