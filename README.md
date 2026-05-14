@@ -1,4 +1,4 @@
-# Filament Gallery
+# Filament Collection Town
 
 A visual color reference for a 3D printing filament collection, hosted via GitHub Pages.
 
@@ -27,3 +27,7 @@ That script:
 ## Stack
 
 Plain HTML + CSS + JS. No build step, no dependencies, no framework.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
