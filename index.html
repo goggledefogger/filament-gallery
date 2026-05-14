@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Filament Collection</title>
+  <meta name="description" content="A visual reference of 3D printing filaments organized by material type." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f0f12;
+      --surface:   #1a1a22;
+      --card:      #22222e;
+      --border:    #2e2e3e;
+      --accent:    #7c6af7;
+      --accent2:   #4fc3f7;
+      --text:      #e2e2ec;
+      --muted:     #7b7b96;
+      --radius:    14px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #16161f 0%, var(--bg) 100%);
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 24px 24px 0;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      letter-spacing: 0.02em;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 32px 24px 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      padding: 0 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(124, 106, 247, 0.18);
+    }
+    .card.hidden { display: none; }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: var(--surface);
+    }
+    .card-img.missing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .card-body {
+      padding: 12px 14px 14px;
+    }
+    .card-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--text);
+    }
+    .card-meta {
+      margin-top: 5px;
+      font-size: 0.73rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 100px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .badge-pla   { background: #1e3a2f; color: #5dd49a; }
+    .badge-htpla { background: #2a1e40; color: #b07ef8; }
+    .badge-petg  { background: #1a2e3a; color: #4fc3f7; }
+
+    .count {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding-top: 32px;
+    }
+
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Filament Collection</h1>
+  <p>3D printing filaments — visual color reference</p>
+</header>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="PLA">PLA</button>
+  <button class="filter-btn" data-filter="HTPLA">HTPLA</button>
+  <button class="filter-btn" data-filter="PETG">PETG</button>
+</div>
+
+<div id="gallery"></div>
+<p class="count" id="count"></p>
+
+<script>
+// ─── FILAMENT DATA ────────────────────────────────────────────────────────────
+// AUTO-GENERATED — edit via scripts/publish-filament-gallery.py
+const FILAMENTS = [
+  { name: "Candy Almandine Red", material: "HTPLA", image: "images/protopasta-candy-almandine-red-htpla.jpg" },
+  { name: "Ecto Ooze Green", material: "HTPLA", image: "images/protopasta-ecto-ooze-green-htpla.png" },
+  { name: "Fading Rainbow Multicolor", material: "HTPLA", image: "images/protopasta-fading-rainbow-multicolor-htpla.png" },
+  { name: "Glitter's Mane Teal", material: "HTPLA", image: "images/protopasta-glitters-mane-teal-htpla.jpg" },
+  { name: "Green Glow-in-the-Dark White", material: "HTPLA", image: "images/protopasta-green-glow-dark-white-htpla.png" },
+  { name: "Lapis Lazuli", material: "HTPLA", image: "images/protopasta-lapis-lazuli-htpla.png" },
+  { name: "Matte Fiber Black", material: "HTPLA", image: "images/protopasta-matte-fiber-black-htpla.jpg" },
+  { name: "Red Hot Cinnamon", material: "HTPLA", image: null },
+  { name: "Tropical Punk Green", material: "HTPLA", image: "images/protopasta-tropical-punk-green-htpla.png" },
+  { name: "Black PETG", material: "PETG", image: "images/protopasta-black-petg.jpg" },
+  { name: "Black Recycled", material: "PLA", image: "images/protopasta-black-recycled-pla.jpg" },
+  { name: "Brown", material: "PLA", image: null },
+  { name: "Natural", material: "PLA", image: "images/protopasta-natural-pla.jpg" },
+  { name: "Orange (bundled with printer)", material: "PLA", image: null },
+  { name: "Still Colorful G32 Recycled", material: "PLA", image: "images/protopasta-still-colorful-g32-recycled-pla.png" },
+  { name: "Still Colorful O31 Recycled", material: "PLA", image: "images/protopasta-still-colorful-o31-recycled-pla.png" },
+  { name: "Still Colorful Recycled", material: "PLA", image: "images/protopasta-still-colorful-o31-recycled-pla.png" },
+  { name: "Unknown Dark", material: "PLA", image: null },
+  { name: "White", material: "PLA", image: "images/protopasta-white-pla.jpg" },
+  { name: "Support for PLA/PETG", material: "Support", image: null },
+];
+// ─────────────────────────────────────────────────────────────────────────────
+
+const BADGE = { PLA: "badge-pla", HTPLA: "badge-htpla", PETG: "badge-petg" };
+
+function render(filter = "all") {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+
+  const groups = {};
+  FILAMENTS.forEach(f => {
+    if (filter !== "all" && f.material !== filter) return;
+    (groups[f.material] = groups[f.material] || []).push(f);
+  });
+
+  const order = ["PLA", "HTPLA", "PETG"];
+  let total = 0;
+
+  order.forEach(mat => {
+    const items = groups[mat];
+    if (!items) return;
+    total += items.length;
+
+    const label = document.createElement("div");
+    label.className = "section-label";
+    label.textContent = mat;
+    gallery.appendChild(label);
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    items.forEach(f => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        ${f.image
+          ? `<img class="card-img" src="${f.image}" alt="${f.name}" loading="lazy" />`
+          : `<div class="card-img missing">🎨</div>`}
+        <div class="card-body">
+          <div class="card-name">${f.name}</div>
+          <div class="card-meta">
+            <span class="badge ${BADGE[f.material] || ''}">${f.material}</span>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    gallery.appendChild(grid);
+  });
+
+  document.getElementById("count").textContent = `${total} filament${total !== 1 ? "s" : ""}`;
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    render(btn.dataset.filter);
+  });
+});
+
+render();
+</script>
+</body>
+</html>
