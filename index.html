@@ -97,6 +97,7 @@
     }
 
     .card {
+      position: relative;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -174,6 +175,32 @@
     .status-dot.sealed  { background: #b07ef8; }
     .status-dot.low     { background: #ffd54f; }
     .status-dot.empty   { background: #ef5350; }
+
+    .spool-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 15, 18, 0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 5;
+    }
+    .spool-badge svg {
+      color: var(--accent2);
+    }
+    .spool-badge.small svg {
+      color: #b07ef8;
+    }
 
     .count {
       text-align: center;
@@ -278,6 +305,9 @@ function render(filter = "all") {
   const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "low": "Low", "empty": "Empty" };
   const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
 
+  const ICON_SPOOL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="4" rx="8" ry="3"/><ellipse cx="12" cy="20" rx="8" ry="3"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15" x2="16" y2="15"/></svg>`;
+  const ICON_COIL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
+
   order.forEach(mat => {
     const items = groups[mat];
     if (!items) return;
@@ -298,7 +328,16 @@ function render(filter = "all") {
       const statusLabel = f.status ? (STATUS_LABELS[f.status] || f.status) : "";
       const weightLabel = f.weight || "";
       const spoolLabel = f.spool ? (SPOOL_LABELS[f.spool] || f.spool) : "";
-      const detailParts = [weightLabel, spoolLabel].filter(Boolean).join(" · ");
+      // detail parts now just show spool type since weight is on the icon badge
+      const detailParts = [spoolLabel].filter(Boolean).join(" · ");
+
+      const weightNum = parseInt(f.weight) || 0;
+      let iconSvg = ICON_SPOOL;
+      let sizeClass = "large";
+      if (weightNum <= 50) { iconSvg = ICON_COIL; sizeClass = "small"; }
+      else if (weightNum <= 500) { sizeClass = "medium"; }
+
+      const spoolBadgeHtml = f.weight ? `<div class="spool-badge ${sizeClass}">${iconSvg}<span>${f.weight}</span></div>` : "";
 
       let imgTag = `<div class="card-img missing">🎨</div>`;
       if (f.image) {
@@ -309,6 +348,7 @@ function render(filter = "all") {
 
       card.innerHTML = `
         ${imgTag}
+        ${spoolBadgeHtml}
         <div class="card-body">
           <div class="card-name">${f.name}</div>
           <div class="card-meta">
