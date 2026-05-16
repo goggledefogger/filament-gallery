@@ -25,12 +25,21 @@
     body {
       font-family: 'IBM Plex Sans', system-ui, sans-serif;
       background:
-        radial-gradient(circle at 20% 0%, rgba(124, 106, 247, 0.06), transparent 40%),
-        radial-gradient(circle at 80% 0%, rgba(79, 195, 247, 0.04), transparent 40%),
+        radial-gradient(ellipse 80% 50% at 15% 0%, rgba(124, 106, 247, 0.14), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 85% 10%, rgba(79, 195, 247, 0.10), transparent 60%),
         var(--bg);
       color: var(--text);
       min-height: 100vh;
       padding: 0 0 60px;
+    }
+
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes sectionEnter {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
 
     header {
@@ -104,12 +113,19 @@
       border-color: var(--accent);
       border-style: solid;
       color: var(--text);
+      transform: translateY(-1px);
+    }
+    .filter-btn:focus-visible {
+      outline: 2px solid var(--accent2);
+      outline-offset: 3px;
+      border-style: solid;
     }
     .filter-btn.active {
       background: var(--accent);
       border-color: var(--accent);
       border-style: solid;
       color: #fff;
+      box-shadow: 0 4px 14px rgba(124, 106, 247, 0.35);
     }
 
     .section-label {
@@ -153,6 +169,16 @@
       overflow: hidden;
       cursor: pointer;
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      animation: cardEnter 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .card:focus-visible {
+      outline: 2px solid var(--accent2);
+      outline-offset: 3px;
+      border-color: var(--accent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .card { animation: none; }
+      .filter-btn:hover { transform: none; }
     }
     .card::before {
       content: "";
@@ -174,100 +200,6 @@
     /* ── On-the-way: just labeled (stamp) and sectioned (Inbound). ───────── */
     /* Card itself looks identical to in-hand cards — image, hover, lightbox all stay. */
     .card.on-the-way { overflow: visible; }
-
-    /* Manifest placeholder when image isn't shot yet */
-    .card.on-the-way .card-img.missing {
-      font-family: 'IBM Plex Mono', monospace;
-      flex-direction: column;
-      gap: 0;
-      background: linear-gradient(170deg, #1c1c27 0%, #14141d 100%);
-      position: relative;
-      padding: 20px 24px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.55rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      overflow: hidden;
-    }
-    /* tear-off perforation strip on the left */
-    .card.on-the-way .card-img.missing::before {
-      content: "";
-      position: absolute;
-      top: 12px;
-      bottom: 12px;
-      left: 10px;
-      width: 1px;
-      background-image: linear-gradient(180deg, rgba(176,126,248,0.55) 50%, transparent 50%);
-      background-size: 1px 6px;
-    }
-    /* postal-mark cancellation lines top-right */
-    .card.on-the-way .card-img.missing::after {
-      content: "";
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 38px;
-      height: 22px;
-      background-image: repeating-linear-gradient(
-        180deg,
-        rgba(176, 126, 248, 0.32) 0 1.5px,
-        transparent 1.5px 5px
-      );
-      transform: rotate(-12deg);
-    }
-    .otw-manifest-mark { font-size: 0.5rem; opacity: 0.5; line-height: 1; margin-bottom: 14px; }
-    .otw-manifest-swatch {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      margin: 0 auto 12px;
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,0.06),
-        inset 0 -8px 14px rgba(0,0,0,0.45),
-        0 4px 14px rgba(0,0,0,0.4);
-      position: relative;
-    }
-    .otw-manifest-swatch::after {
-      content: "";
-      position: absolute;
-      inset: 4px;
-      border-radius: 50%;
-      border: 1px dashed rgba(255,255,255,0.18);
-    }
-    .otw-manifest-code {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: 0.28em;
-      line-height: 1.1;
-      margin-top: 2px;
-    }
-    .otw-manifest-meta {
-      font-size: 0.5rem;
-      opacity: 0.55;
-      margin-top: 6px;
-      letter-spacing: 0.18em;
-    }
-    .otw-manifest-eta {
-      margin-top: auto;
-      padding-top: 16px;
-      font-size: 0.5rem;
-      opacity: 0.62;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      letter-spacing: 0.16em;
-    }
-    .otw-manifest-eta::before,
-    .otw-manifest-eta::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background-image: linear-gradient(90deg, rgba(176,126,248,0.5) 50%, transparent 50%);
-      background-size: 4px 1px;
-    }
 
     /* "IN TRANSIT" stamp — rotated, dashed, mono */
     .otw-stamp {
@@ -302,10 +234,47 @@
       background: var(--surface);
     }
     .card-img.missing {
+      font-family: 'IBM Plex Mono', monospace;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      gap: 14px;
+      background: linear-gradient(170deg, #1c1c27 0%, #14141d 100%);
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    .card-img.missing .swatch {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.06),
+        inset 0 -10px 20px rgba(0,0,0,0.5),
+        0 6px 18px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .card-img.missing .swatch::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,255,255,0.16);
+    }
+    .card-img.missing .swatch-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.26em;
+    }
+    .card-img.missing .swatch-meta {
+      font-size: 0.5rem;
+      opacity: 0.55;
+      letter-spacing: 0.18em;
     }
 
     .card-body {
@@ -316,10 +285,10 @@
     .card-name {
       font-family: 'IBM Plex Sans', sans-serif;
       font-size: 1rem;
-      font-weight: 500;
-      line-height: 1.35;
+      font-weight: 600;
+      line-height: 1.3;
       color: var(--text);
-      letter-spacing: -0.005em;
+      letter-spacing: -0.01em;
     }
     .card-meta {
       margin-top: 8px;
@@ -471,15 +440,21 @@
     }
     .count-badge {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background: var(--accent);
-      color: white;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      top: 12px;
+      left: 12px;
+      background: rgba(20, 20, 28, 0.78);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid var(--accent);
+      color: #c6a8fc;
+      font-family: 'IBM Plex Mono', monospace;
+      padding: 4px 9px;
+      border-radius: 0;
+      font-weight: 600;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
       z-index: 5;
     }
   </style>
@@ -636,23 +611,22 @@ function render(filter = "all") {
         }
       }
 
-      let imgTag = `<div class="card-img missing">🎨</div>`;
-      if (onTheWay && !f.image) {
-        const sw = swatchFor(f);
-        imgTag = `<div class="card-img missing">
-          <div class="otw-manifest-mark">Parcel · ${f.material}</div>
-          <div class="otw-manifest-swatch" style="background: ${sw};"></div>
-          <div class="otw-manifest-code">${(f.color || "—").toUpperCase()}</div>
-          <div class="otw-manifest-meta">${f.weight || ""} · ${SPOOL_LABELS[f.spool] || f.spool || ""}</div>
-          <div class="otw-manifest-eta">Inbound</div>
-        </div>`;
-      } else if (f.image) {
+      let imgTag;
+      if (f.image) {
         const idx = lbItems.length;
         lbItems.push(f);
-        imgTag = `<img class="card-img lb-trigger" src="${f.image}" alt="${f.name}" data-idx="${idx}" loading="lazy" style="cursor: zoom-in;" />`;
+        const loadingAttr = idx < 5 ? 'eager' : 'lazy';
+        imgTag = `<img class="card-img lb-trigger" src="${f.image}" alt="${f.name}" data-idx="${idx}" loading="${loadingAttr}" style="cursor: zoom-in;" />`;
+      } else {
+        const sw = swatchFor(f);
+        imgTag = `<div class="card-img missing">
+          <div class="swatch" style="background: ${sw};"></div>
+          <div class="swatch-label">${(f.color || f.name || "—").toUpperCase()}</div>
+          <div class="swatch-meta">${f.material}${f.weight ? " · " + f.weight : ""}</div>
+        </div>`;
       }
 
-      const countBadgeHtml = (f.count > 1 ? `<div class="count-badge">${f.count}x Spools</div>` : "")
+      const countBadgeHtml = (f.count > 1 ? `<div class="count-badge">${f.count}× Spools</div>` : "")
         + (onTheWay ? `<div class="otw-stamp">In Transit</div>` : "");
 
       const matLower = f.material.toLowerCase();
@@ -682,6 +656,7 @@ function render(filter = "all") {
 
   function renderSection(labelText, items) {
     if (!items || !items.length) return;
+    const startIndex = total;
     total += items.length;
     const labelEl = document.createElement("div");
     labelEl.className = "section-label";
@@ -689,7 +664,13 @@ function render(filter = "all") {
     gallery.appendChild(labelEl);
     const grid = document.createElement("div");
     grid.className = "grid";
-    items.forEach(f => grid.appendChild(buildCard(f)));
+    items.forEach((f, i) => {
+      const card = buildCard(f);
+      const globalIdx = startIndex + i;
+      // Stagger cards on initial load; cap delay so later cards don't take forever
+      card.style.animationDelay = `${Math.min(globalIdx * 25, 600)}ms`;
+      grid.appendChild(card);
+    });
     gallery.appendChild(grid);
   }
 
