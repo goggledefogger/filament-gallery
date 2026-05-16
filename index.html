@@ -496,6 +496,7 @@
   <button class="filter-btn" data-filter="PLA">PLA</button>
   <button class="filter-btn" data-filter="HTPLA">HTPLA</button>
   <button class="filter-btn" data-filter="PETG">PETG</button>
+  <button class="filter-btn" data-filter="in-transit">In Transit</button>
 </div>
 
 <div id="gallery"></div>
@@ -553,8 +554,14 @@ function render(filter = "all") {
   const inHandGroups = {};
   const inTransit = [];
   FILAMENTS.forEach(f => {
+    const onTheWay = f.status === "on-the-way";
+    if (filter === "in-transit") {
+      if (!onTheWay) return;
+      inTransit.push(f);
+      return;
+    }
     if (filter !== "all" && f.material !== filter) return;
-    if (f.status === "on-the-way") inTransit.push(f);
+    if (onTheWay) inTransit.push(f);
     else (inHandGroups[f.material] = inHandGroups[f.material] || []).push(f);
   });
 
