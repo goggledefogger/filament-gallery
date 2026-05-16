@@ -6,7 +6,7 @@
   <title>Filament Collection Town</title>
   <meta name="description" content="A visual reference of 3D printing filaments organized by material type." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,32 +23,60 @@
     }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(124, 106, 247, 0.06), transparent 40%),
+        radial-gradient(circle at 80% 0%, rgba(79, 195, 247, 0.04), transparent 40%),
+        var(--bg);
       color: var(--text);
       min-height: 100vh;
       padding: 0 0 60px;
     }
 
     header {
-      padding: 48px 24px 32px;
+      padding: 56px 24px 36px;
       text-align: center;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px dashed var(--border);
       background: linear-gradient(180deg, #16161f 0%, var(--bg) 100%);
+      position: relative;
+    }
+    .header-edition {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-edition::before,
+    .header-edition::after {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background-image: linear-gradient(90deg, rgba(176,126,248,0.5) 50%, transparent 50%);
+      background-size: 4px 1px;
     }
     header h1 {
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
       font-weight: 600;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.025em;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      line-height: 1.1;
     }
     header p {
-      margin-top: 8px;
+      margin-top: 12px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
     }
 
     .filters {
@@ -56,36 +84,57 @@
       gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
-      padding: 24px 24px 0;
+      padding: 28px 24px 0;
     }
     .filter-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: transparent;
+      border: 1px dashed var(--border);
       color: var(--muted);
-      font-family: inherit;
-      font-size: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
       font-weight: 500;
       padding: 6px 14px;
-      border-radius: 100px;
+      border-radius: 0;
       cursor: pointer;
       transition: all 0.18s ease;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
     }
-    .filter-btn:hover, .filter-btn.active {
+    .filter-btn:hover {
+      border-color: var(--accent);
+      border-style: solid;
+      color: var(--text);
+    }
+    .filter-btn.active {
       background: var(--accent);
       border-color: var(--accent);
+      border-style: solid;
       color: #fff;
     }
 
     .section-label {
-      font-size: 1.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
       font-weight: 600;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
       color: var(--text);
-      padding: 32px 24px 16px;
+      padding: 40px 24px 18px;
       max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
+    .section-label::before,
+    .section-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-image: linear-gradient(90deg, var(--border) 50%, transparent 50%);
+      background-size: 6px 1px;
+    }
+    .section-label::before { max-width: 28px; }
 
     .grid {
       display: grid;
@@ -104,6 +153,16 @@
       overflow: hidden;
       cursor: pointer;
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0);
+      background-size: 6px 6px;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      z-index: 1;
     }
     .card:hover {
       transform: translateY(-4px);
@@ -315,34 +374,59 @@
 
     .card-body {
       padding: 14px 16px 16px;
+      position: relative;
+      z-index: 2;
     }
     .card-name {
+      font-family: 'IBM Plex Sans', sans-serif;
       font-size: 1rem;
       font-weight: 500;
       line-height: 1.35;
       color: var(--text);
+      letter-spacing: -0.005em;
     }
     .card-meta {
-      margin-top: 6px;
-      font-size: 0.75rem;
+      margin-top: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.66rem;
       color: var(--muted);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      letter-spacing: 0.06em;
     }
     .badge {
       display: inline-block;
       padding: 2px 7px;
-      border-radius: 100px;
-      font-size: 0.68rem;
+      border-radius: 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
       font-weight: 600;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
+      background: transparent;
+      border: 1px solid currentColor;
+      line-height: 1.4;
     }
-    .badge-pla   { background: #1e3a2f; color: #5dd49a; }
-    .badge-htpla { background: #2a1e40; color: #b07ef8; }
-    .badge-petg  { background: #1a2e3a; color: #4fc3f7; }
-    .badge-rpla  { background: #1e3a24; color: #81c784; }
+    .badge-pla   { color: #5dd49a; }
+    .badge-htpla { color: #b07ef8; }
+    .badge-petg  { color: #4fc3f7; }
+    .badge-rpla  { color: #81c784; }
+    .card-meta .status-text { text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.16em; }
+    .status-mark {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      margin-right: 5px;
+      transform: translateY(-1px);
+    }
+    .status-mark.in-ams      { color: #4fc3f7; }
+    .status-mark.open        { color: #b07ef8; }
+    .status-mark.sealed      { color: #6b6b85; }
+    .status-mark.low         { color: #fb923c; }
+    .status-mark.empty       { color: #3f3f4a; }
+    .status-mark.on-the-way  { color: #c6a8fc; }
 
     .card-detail {
       margin-top: 6px;
@@ -378,14 +462,18 @@
       gap: 4px;
     }
     .spool-badge-weight {
+      font-family: 'IBM Plex Mono', monospace;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       line-height: 1;
+      letter-spacing: 0.04em;
     }
     .spool-badge-weight small {
-      font-size: 0.65rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
       color: var(--muted);
       font-weight: 500;
+      letter-spacing: 0.06em;
     }
     .spool-badge-bar {
       height: 3px;
@@ -403,8 +491,26 @@
     .count {
       text-align: center;
       color: var(--muted);
-      font-size: 0.8rem;
-      padding-top: 32px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      padding-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .count::before,
+    .count::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-image: linear-gradient(90deg, var(--border) 50%, transparent 50%);
+      background-size: 6px 1px;
     }
 
     @media (max-width: 480px) {
@@ -476,18 +582,18 @@ const FILAMENTS = [
   { name: "Candy Almandine Red", material: "HTPLA", color: "Red-Purple", image: "images/protopasta-candy-almandine-red-htpla.jpg", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
   { name: "Ecto Ooze Green", material: "HTPLA", color: "Green", image: "images/protopasta-ecto-ooze-green-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Fading Rainbow Multicolor", material: "HTPLA", color: "Rainbow", image: "images/protopasta-fading-rainbow-multicolor-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Fleck 'n Fire Red Glitter", material: "HTPLA", color: "Red", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Fleck 'n Forest Green Glitter", material: "HTPLA", color: "Green", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Galactic Empire Metallic Purple", material: "HTPLA", color: "Purple", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Fleck 'n Fire Red Glitter", material: "HTPLA", color: "Red", image: "images/protopasta-fleckn-fire-red-glitter-htpla.jpg", weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Fleck 'n Forest Green Glitter", material: "HTPLA", color: "Green", image: "images/protopasta-fleckn-forest-green-glitter-htpla.jpg", weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Galactic Empire Metallic Purple", material: "HTPLA", color: "Purple", image: "images/protopasta-galactic-empire-metallic-purple-htpla.jpg", weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Glitter's Mane Teal", material: "HTPLA", color: "Teal", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Green Glow-in-the-Dark White", material: "HTPLA", color: "White", image: "images/protopasta-green-glow-dark-white-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Lapis Lazuli", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Lapis Lazuli Glitter", material: "HTPLA", color: "Blue", image: null, weight: "500g", status: "on-the-way", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Lapis Lazuli Glitter", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-glitter-htpla.png", weight: "500g", status: "on-the-way", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
   { name: "Matte Fiber Black", material: "HTPLA", color: "Black", image: "images/protopasta-matte-fiber-black-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Pretty in Pink Pearl", material: "HTPLA", color: "Pink", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Pretty in Pink Pearl", material: "HTPLA", color: "Pink", image: "images/protopasta-pretty-in-pink-pearl-htpla.jpg", weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Red Hot Cinnamon", material: "HTPLA", color: "Red", image: "images/protopasta-red-hot-cinnamon-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Tropical Punk Green", material: "HTPLA", color: "Green", image: "images/protopasta-tropical-punk-green-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Winter Blue Glitter Flake", material: "HTPLA", color: "Blue", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Winter Blue Glitter Flake", material: "HTPLA", color: "Blue", image: "images/protopasta-winter-blue-glitter-flake-htpla.jpg", weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Black PETG", material: "PETG", color: "Black", image: "images/protopasta-black-petg.jpg", weight: "1000g", status: "in-ams", spool: "full", used: 111.32, remaining: 888.6800000000001, count: 1, is_recycled: false },
   { name: "Black Recycled", material: "PLA", color: "Black", image: "images/protopasta-black-recycled-pla.jpg", weight: "2000g", status: "in-ams", spool: "full", used: 590.43, remaining: 1409.5700000000002, count: 2, is_recycled: true },
   { name: "Brown", material: "PLA", color: "Brown", image: "images/protopasta-chocolate-eruption-brown-htpla.png", weight: "50g", status: "low", spool: "sample", used: 30.0, remaining: 20.0, count: 1, is_recycled: false },
@@ -573,7 +679,7 @@ function render(filter = "all") {
       const card = document.createElement("div");
       card.className = onTheWay ? "card on-the-way" : "card";
 
-      const statusDot = f.status ? `<span class="status-dot ${f.status}"></span>` : "";
+      const statusMark = f.status ? `<span class="status-mark ${f.status}"></span>` : "";
       const statusLabel = f.status ? (STATUS_LABELS[f.status] || f.status) : "";
       const weightLabel = f.weight || "";
       const spoolLabel = f.spool ? (SPOOL_LABELS[f.spool] || f.spool) : "";
@@ -648,7 +754,7 @@ function render(filter = "all") {
           <div class="card-name">${titlePrefix}${f.name}</div>
           <div class="card-meta">
             <span class="badge ${badgeClass}">${badgeLabel}</span>
-            ${statusDot ? `<span style="display:flex;align-items:center;gap:4px;">${statusDot}<span>${statusLabel}</span></span>` : ""}
+            ${statusMark ? `<span class="status-text">${statusMark}${statusLabel}</span>` : ""}
             ${detailParts ? `<span style="margin-left: auto; text-align: right; opacity: 0.8;">${detailParts}</span>` : ""}
           </div>
         </div>`;
