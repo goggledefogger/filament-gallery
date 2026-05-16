@@ -171,32 +171,9 @@
     }
     .card.hidden { display: none; }
 
-    /* ── On-the-way: shipping manifest aesthetic ─────────────────────────── */
-    .card.on-the-way {
-      background: #181822;
-      border: 1.5px dashed rgba(176, 126, 248, 0.42);
-      cursor: default;
-      overflow: visible;
-      box-shadow: none;
-    }
-    .card.on-the-way::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0);
-      background-size: 6px 6px;
-      border-radius: inherit;
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-    .card.on-the-way:hover {
-      transform: none;
-      border-color: rgba(176, 126, 248, 0.78);
-      box-shadow: 0 6px 22px rgba(124, 106, 247, 0.10);
-    }
-    .card.on-the-way .card-img:not(.missing) {
-      cursor: default;
-    }
+    /* ── On-the-way: just labeled (stamp) and sectioned (Inbound). ───────── */
+    /* Card itself looks identical to in-hand cards — image, hover, lightbox all stay. */
+    .card.on-the-way { overflow: visible; }
 
     /* Manifest placeholder when image isn't shot yet */
     .card.on-the-way .card-img.missing {
@@ -315,24 +292,6 @@
     }
     .otw-stamp::before { content: "→ "; opacity: 0.7; }
 
-    /* meta row gets mono treatment on these cards */
-    .card.on-the-way .card-name {
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      font-size: 0.88rem;
-    }
-    .card.on-the-way .card-meta {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.06em;
-    }
-    .card.on-the-way .badge {
-      letter-spacing: 0.1em;
-      background: transparent !important;
-      border: 1px solid currentColor;
-      padding: 1px 6px;
-    }
 
 
     .card-img {
@@ -681,13 +640,9 @@ function render(filter = "all") {
           <div class="otw-manifest-eta">Inbound</div>
         </div>`;
       } else if (f.image) {
-        if (onTheWay) {
-          imgTag = `<img class="card-img" src="${f.image}" alt="${f.name}" loading="lazy" />`;
-        } else {
-          const idx = lbItems.length;
-          lbItems.push(f);
-          imgTag = `<img class="card-img lb-trigger" src="${f.image}" alt="${f.name}" data-idx="${idx}" loading="lazy" style="cursor: zoom-in;" />`;
-        }
+        const idx = lbItems.length;
+        lbItems.push(f);
+        imgTag = `<img class="card-img lb-trigger" src="${f.image}" alt="${f.name}" data-idx="${idx}" loading="lazy" style="cursor: zoom-in;" />`;
       }
 
       const countBadgeHtml = (f.count > 1 ? `<div class="count-badge">${f.count}x Spools</div>` : "")
