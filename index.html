@@ -6,7 +6,7 @@
   <title>Filament Collection Town</title>
   <meta name="description" content="A visual reference of 3D printing filaments organized by material type." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -112,32 +112,191 @@
     }
     .card.hidden { display: none; }
 
+    /* ── On-the-way: shipping manifest aesthetic ─────────────────────────── */
     .card.on-the-way {
-      opacity: 0.55;
-      filter: grayscale(0.65);
+      background: #181822;
+      border: 1.5px dashed rgba(176, 126, 248, 0.42);
       cursor: default;
+      overflow: visible;
+      box-shadow: none;
+    }
+    .card.on-the-way::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0);
+      background-size: 6px 6px;
+      border-radius: inherit;
+      pointer-events: none;
+      mix-blend-mode: screen;
     }
     .card.on-the-way:hover {
       transform: none;
-      border-color: var(--border);
-      box-shadow: none;
-      opacity: 0.75;
+      border-color: rgba(176, 126, 248, 0.78);
+      box-shadow: 0 6px 22px rgba(124, 106, 247, 0.10);
     }
-    .card.on-the-way .card-img { cursor: default !important; }
-    .otw-ribbon {
+    .card.on-the-way .card-img:not(.missing) {
+      filter: saturate(0.45) brightness(0.86) contrast(0.95);
+      cursor: default;
+    }
+
+    /* Manifest placeholder when image isn't shot yet */
+    .card.on-the-way .card-img.missing {
+      font-family: 'IBM Plex Mono', monospace;
+      flex-direction: column;
+      gap: 0;
+      background: linear-gradient(170deg, #1c1c27 0%, #14141d 100%);
+      position: relative;
+      padding: 20px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      overflow: hidden;
+    }
+    /* tear-off perforation strip on the left */
+    .card.on-the-way .card-img.missing::before {
+      content: "";
       position: absolute;
       top: 12px;
-      left: 0;
-      background: linear-gradient(90deg, #5b3a8a, #7c6af7);
-      color: #fff;
-      font-size: 0.62rem;
+      bottom: 12px;
+      left: 10px;
+      width: 1px;
+      background-image: linear-gradient(180deg, rgba(176,126,248,0.55) 50%, transparent 50%);
+      background-size: 1px 6px;
+    }
+    /* postal-mark cancellation lines top-right */
+    .card.on-the-way .card-img.missing::after {
+      content: "";
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 38px;
+      height: 22px;
+      background-image: repeating-linear-gradient(
+        180deg,
+        rgba(176, 126, 248, 0.32) 0 1.5px,
+        transparent 1.5px 5px
+      );
+      transform: rotate(-12deg);
+    }
+    .otw-manifest-mark { font-size: 0.5rem; opacity: 0.5; line-height: 1; margin-bottom: 14px; }
+    .otw-manifest-swatch {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.06),
+        inset 0 -8px 14px rgba(0,0,0,0.45),
+        0 4px 14px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .otw-manifest-swatch::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,255,255,0.18);
+    }
+    .otw-manifest-code {
+      font-size: 0.72rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      color: var(--text);
+      letter-spacing: 0.28em;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+    .otw-manifest-meta {
+      font-size: 0.5rem;
+      opacity: 0.55;
+      margin-top: 6px;
+      letter-spacing: 0.18em;
+    }
+    .otw-manifest-eta {
+      margin-top: auto;
+      padding-top: 16px;
+      font-size: 0.5rem;
+      opacity: 0.62;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      letter-spacing: 0.16em;
+    }
+    .otw-manifest-eta::before,
+    .otw-manifest-eta::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-image: linear-gradient(90deg, rgba(176,126,248,0.5) 50%, transparent 50%);
+      background-size: 4px 1px;
+    }
+
+    /* "IN TRANSIT" stamp — rotated, dashed, mono */
+    .otw-stamp {
+      position: absolute;
+      top: 14px;
+      left: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      color: #c6a8fc;
+      border: 1.5px dashed #b07ef8;
+      padding: 5px 10px 4px;
+      background: rgba(20, 20, 28, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transform: rotate(-6deg);
       text-transform: uppercase;
-      padding: 4px 10px 4px 12px;
-      border-radius: 0 6px 6px 0;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-      z-index: 6;
+      z-index: 7;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+      text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+    }
+    .otw-stamp::before { content: "→ "; opacity: 0.7; }
+
+    /* meta row gets mono treatment on these cards */
+    .card.on-the-way .card-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      font-size: 0.88rem;
+    }
+    .card.on-the-way .card-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+    }
+    .card.on-the-way .badge {
+      letter-spacing: 0.1em;
+      background: transparent !important;
+      border: 1px solid currentColor;
+      padding: 1px 6px;
+    }
+
+    /* Section subhead for the in-transit row */
+    .otw-subhead {
+      grid-column: 1 / -1;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(176, 126, 248, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .otw-subhead::before,
+    .otw-subhead::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-image: linear-gradient(90deg, rgba(176,126,248,0.45) 50%, transparent 50%);
+      background-size: 6px 1px;
     }
 
     .card-img {
@@ -314,32 +473,32 @@
 // ─── FILAMENT DATA ────────────────────────────────────────────────────────────
 // AUTO-GENERATED — edit via scripts/publish-filament-gallery.py
 const FILAMENTS = [
-  { name: "Candy Almandine Red", material: "HTPLA", image: "images/protopasta-candy-almandine-red-htpla.jpg", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Ecto Ooze Green", material: "HTPLA", image: "images/protopasta-ecto-ooze-green-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Fading Rainbow Multicolor", material: "HTPLA", image: "images/protopasta-fading-rainbow-multicolor-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Fleck 'n Fire Red Glitter", material: "HTPLA", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Fleck 'n Forest Green Glitter", material: "HTPLA", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Galactic Empire Metallic Purple", material: "HTPLA", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Glitter's Mane Teal", material: "HTPLA", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Green Glow-in-the-Dark White", material: "HTPLA", image: "images/protopasta-green-glow-dark-white-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Lapis Lazuli", material: "HTPLA", image: "images/protopasta-lapis-lazuli-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Lapis Lazuli Glitter", material: "HTPLA", image: null, weight: "500g", status: "on-the-way", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Matte Fiber Black", material: "HTPLA", image: "images/protopasta-matte-fiber-black-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Pretty in Pink Pearl", material: "HTPLA", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Red Hot Cinnamon", material: "HTPLA", image: "images/protopasta-red-hot-cinnamon-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Tropical Punk Green", material: "HTPLA", image: "images/protopasta-tropical-punk-green-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Winter Blue Glitter Flake", material: "HTPLA", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Black PETG", material: "PETG", image: "images/protopasta-black-petg.jpg", weight: "1000g", status: "in-ams", spool: "full", used: 111.32, remaining: 888.6800000000001, count: 1, is_recycled: false },
-  { name: "Black Recycled", material: "PLA", image: "images/protopasta-black-recycled-pla.jpg", weight: "2000g", status: "in-ams", spool: "full", used: 590.43, remaining: 1409.5700000000002, count: 2, is_recycled: true },
-  { name: "Brown", material: "PLA", image: "images/protopasta-chocolate-eruption-brown-htpla.png", weight: "50g", status: "low", spool: "sample", used: 30.0, remaining: 20.0, count: 1, is_recycled: false },
-  { name: "Natural", material: "PLA", image: "images/protopasta-natural-pla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Orange (bundled with printer)", material: "PLA", image: "images/bambu-lab-orange-pla.webp", weight: "1000g", status: "open", spool: "full", used: 500.0, remaining: 500.0, count: 1, is_recycled: false },
-  { name: "Still Colorful G32 Recycled", material: "PLA", image: "images/protopasta-still-colorful-032-recycled-pla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: true },
-  { name: "Still Colorful O31 Recycled", material: "PLA", image: "images/protopasta-still-colorful-031-recycled-pla.png", weight: "1000g", status: "sealed", spool: "full", used: 0, remaining: 1000.0, count: 1, is_recycled: true },
-  { name: "Still Colorful Recycled", material: "PLA", image: "images/protopasta-natural-pla.jpg", weight: "500g", status: "in-ams", spool: "full", used: 20.01, remaining: 479.99, count: 1, is_recycled: true },
-  { name: "Unknown Dark", material: "PLA", image: null, weight: "1000g", status: "low", spool: "remnant", used: 0, remaining: 1000.0, count: 1, is_recycled: false },
-  { name: "White", material: "PLA", image: "images/protopasta-white-pla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
-  { name: "Support for PLA/PETG", material: "Support", image: null, weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Candy Almandine Red", material: "HTPLA", color: "Red-Purple", image: "images/protopasta-candy-almandine-red-htpla.jpg", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Ecto Ooze Green", material: "HTPLA", color: "Green", image: "images/protopasta-ecto-ooze-green-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Fading Rainbow Multicolor", material: "HTPLA", color: "Rainbow", image: "images/protopasta-fading-rainbow-multicolor-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Fleck 'n Fire Red Glitter", material: "HTPLA", color: "Red", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Fleck 'n Forest Green Glitter", material: "HTPLA", color: "Green", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Galactic Empire Metallic Purple", material: "HTPLA", color: "Purple", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Glitter's Mane Teal", material: "HTPLA", color: "Teal", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Green Glow-in-the-Dark White", material: "HTPLA", color: "White", image: "images/protopasta-green-glow-dark-white-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Lapis Lazuli", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Lapis Lazuli Glitter", material: "HTPLA", color: "Blue", image: null, weight: "500g", status: "on-the-way", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Matte Fiber Black", material: "HTPLA", color: "Black", image: "images/protopasta-matte-fiber-black-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Pretty in Pink Pearl", material: "HTPLA", color: "Pink", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Red Hot Cinnamon", material: "HTPLA", color: "Red", image: "images/protopasta-red-hot-cinnamon-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Tropical Punk Green", material: "HTPLA", color: "Green", image: "images/protopasta-tropical-punk-green-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Winter Blue Glitter Flake", material: "HTPLA", color: "Blue", image: null, weight: "50g", status: "on-the-way", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Black PETG", material: "PETG", color: "Black", image: "images/protopasta-black-petg.jpg", weight: "1000g", status: "in-ams", spool: "full", used: 111.32, remaining: 888.6800000000001, count: 1, is_recycled: false },
+  { name: "Black Recycled", material: "PLA", color: "Black", image: "images/protopasta-black-recycled-pla.jpg", weight: "2000g", status: "in-ams", spool: "full", used: 590.43, remaining: 1409.5700000000002, count: 2, is_recycled: true },
+  { name: "Brown", material: "PLA", color: "Brown", image: "images/protopasta-chocolate-eruption-brown-htpla.png", weight: "50g", status: "low", spool: "sample", used: 30.0, remaining: 20.0, count: 1, is_recycled: false },
+  { name: "Natural", material: "PLA", color: "Natural", image: "images/protopasta-natural-pla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Orange (bundled with printer)", material: "PLA", color: "Orange", image: "images/bambu-lab-orange-pla.webp", weight: "1000g", status: "open", spool: "full", used: 500.0, remaining: 500.0, count: 1, is_recycled: false },
+  { name: "Still Colorful G32 Recycled", material: "PLA", color: "Red", image: "images/protopasta-still-colorful-032-recycled-pla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: true },
+  { name: "Still Colorful O31 Recycled", material: "PLA", color: "Red-Coral", image: "images/protopasta-still-colorful-031-recycled-pla.png", weight: "1000g", status: "sealed", spool: "full", used: 0, remaining: 1000.0, count: 1, is_recycled: true },
+  { name: "Still Colorful Recycled", material: "PLA", color: "Off-White", image: "images/protopasta-natural-pla.jpg", weight: "500g", status: "in-ams", spool: "full", used: 20.01, remaining: 479.99, count: 1, is_recycled: true },
+  { name: "Unknown Dark", material: "PLA", color: "Dark", image: null, weight: "1000g", status: "low", spool: "remnant", used: 0, remaining: 1000.0, count: 1, is_recycled: false },
+  { name: "White", material: "PLA", color: "White", image: "images/protopasta-white-pla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Support for PLA/PETG", material: "Support", color: "White", image: null, weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -360,8 +519,29 @@ function render(filter = "all") {
 
   let lbItems = [];
 
-  const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "low": "Low", "empty": "Empty", "on-the-way": "On the Way" };
+  const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "low": "Low", "empty": "Empty", "on-the-way": "Inbound" };
   const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
+
+  const SWATCH = {
+    pink:   "linear-gradient(135deg, #f9a8d4, #db2777)",
+    purple: "linear-gradient(135deg, #c084fc, #6d28d9)",
+    blue:   "linear-gradient(135deg, #60a5fa, #1d4ed8)",
+    red:    "linear-gradient(135deg, #fb7185, #b91c1c)",
+    green:  "linear-gradient(135deg, #86efac, #15803d)",
+    teal:   "linear-gradient(135deg, #5eead4, #0f766e)",
+    orange: "linear-gradient(135deg, #fdba74, #c2410c)",
+    yellow: "linear-gradient(135deg, #fde68a, #b45309)",
+    brown:  "linear-gradient(135deg, #c2855a, #5a3a22)",
+    black:  "linear-gradient(135deg, #4b4b55, #0c0c12)",
+    white:  "linear-gradient(135deg, #f5f5f5, #b8b8c2)",
+    grey:   "linear-gradient(135deg, #a1a1aa, #3f3f46)",
+    gray:   "linear-gradient(135deg, #a1a1aa, #3f3f46)"
+  };
+  function swatchFor(f) {
+    const key = (f.color || f.name || "").toLowerCase();
+    for (const k of Object.keys(SWATCH)) if (key.includes(k)) return SWATCH[k];
+    return "linear-gradient(135deg, #7c6af7, #4fc3f7)";
+  }
 
   const ICON_SPOOL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="4" rx="8" ry="3"/><ellipse cx="12" cy="20" rx="8" ry="3"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15" x2="16" y2="15"/></svg>`;
   const ICON_COIL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
@@ -380,8 +560,16 @@ function render(filter = "all") {
 
     const grid = document.createElement("div");
     grid.className = "grid";
+    let subheadEmitted = false;
     items.forEach(f => {
       const onTheWay = f.status === "on-the-way";
+      if (onTheWay && !subheadEmitted) {
+        const sub = document.createElement("div");
+        sub.className = "otw-subhead";
+        sub.textContent = "Inbound · awaiting arrival";
+        grid.appendChild(sub);
+        subheadEmitted = true;
+      }
       const card = document.createElement("div");
       card.className = onTheWay ? "card on-the-way" : "card";
 
@@ -399,7 +587,7 @@ function render(filter = "all") {
       else if (weightNum <= 500) { sizeClass = "medium"; }
 
       let spoolBadgeHtml = "";
-      if (f.weight) {
+      if (f.weight && !onTheWay) {
         if (f.used > 0 && weightNum > 0) {
           const percent = Math.max(0, Math.min(100, (f.remaining / weightNum) * 100));
           spoolBadgeHtml = `
@@ -420,7 +608,16 @@ function render(filter = "all") {
       }
 
       let imgTag = `<div class="card-img missing">🎨</div>`;
-      if (f.image) {
+      if (onTheWay && !f.image) {
+        const sw = swatchFor(f);
+        imgTag = `<div class="card-img missing">
+          <div class="otw-manifest-mark">Parcel · ${f.material}</div>
+          <div class="otw-manifest-swatch" style="background: ${sw};"></div>
+          <div class="otw-manifest-code">${(f.color || "—").toUpperCase()}</div>
+          <div class="otw-manifest-meta">${f.weight || ""} · ${SPOOL_LABELS[f.spool] || f.spool || ""}</div>
+          <div class="otw-manifest-eta">Inbound</div>
+        </div>`;
+      } else if (f.image) {
         if (onTheWay) {
           imgTag = `<img class="card-img" src="${f.image}" alt="${f.name}" loading="lazy" />`;
         } else {
@@ -431,7 +628,7 @@ function render(filter = "all") {
       }
 
       const countBadgeHtml = (f.count > 1 ? `<div class="count-badge">${f.count}x Spools</div>` : "")
-        + (onTheWay ? `<div class="otw-ribbon">On the Way</div>` : "");
+        + (onTheWay ? `<div class="otw-stamp">In Transit</div>` : "");
 
       const matLower = f.material.toLowerCase();
       let badgeClass = '';
