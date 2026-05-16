@@ -614,10 +614,12 @@ function render(filter = "all") {
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
 
-  const groups = {};
+  const inHandGroups = {};
+  const inTransit = [];
   FILAMENTS.forEach(f => {
     if (filter !== "all" && f.material !== filter) return;
-    (groups[f.material] = groups[f.material] || []).push(f);
+    if (f.status === "on-the-way") inTransit.push(f);
+    else (inHandGroups[f.material] = inHandGroups[f.material] || []).push(f);
   });
 
   const order = ["PLA", "HTPLA", "PETG"];
@@ -652,30 +654,8 @@ function render(filter = "all") {
   const ICON_SPOOL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="4" rx="8" ry="3"/><ellipse cx="12" cy="20" rx="8" ry="3"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15" x2="16" y2="15"/></svg>`;
   const ICON_COIL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
 
-  order.forEach(mat => {
-    const items = groups[mat];
-    if (!items) return;
-    total += items.length;
-
-    items.sort((a, b) => (a.status === "on-the-way") - (b.status === "on-the-way"));
-
-    const label = document.createElement("div");
-    label.className = "section-label";
-    label.textContent = mat;
-    gallery.appendChild(label);
-
-    const grid = document.createElement("div");
-    grid.className = "grid";
-    let subheadEmitted = false;
-    items.forEach(f => {
+  function buildCard(f) {
       const onTheWay = f.status === "on-the-way";
-      if (onTheWay && !subheadEmitted) {
-        const sub = document.createElement("div");
-        sub.className = "otw-subhead";
-        sub.textContent = "Inbound · awaiting arrival";
-        grid.appendChild(sub);
-        subheadEmitted = true;
-      }
       const card = document.createElement("div");
       card.className = onTheWay ? "card on-the-way" : "card";
 
@@ -758,10 +738,24 @@ function render(filter = "all") {
             ${detailParts ? `<span style="margin-left: auto; text-align: right; opacity: 0.8;">${detailParts}</span>` : ""}
           </div>
         </div>`;
-      grid.appendChild(card);
-    });
+      return card;
+  }
+
+  function renderSection(labelText, items) {
+    if (!items || !items.length) return;
+    total += items.length;
+    const labelEl = document.createElement("div");
+    labelEl.className = "section-label";
+    labelEl.textContent = labelText;
+    gallery.appendChild(labelEl);
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    items.forEach(f => grid.appendChild(buildCard(f)));
     gallery.appendChild(grid);
-  });
+  }
+
+  order.forEach(mat => renderSection(mat, inHandGroups[mat]));
+  renderSection("Inbound", inTransit);
 
   document.getElementById("count").textContent = `${total} filament${total !== 1 ? "s" : ""}`;
 
