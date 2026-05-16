@@ -616,7 +616,7 @@ function render(filter = "all") {
       else if (weightNum <= 500) { sizeClass = "medium"; }
 
       let spoolBadgeHtml = "";
-      if (f.weight && !onTheWay) {
+      if (f.weight) {
         if (f.used > 0 && weightNum > 0) {
           const percent = Math.max(0, Math.min(100, (f.remaining / weightNum) * 100));
           spoolBadgeHtml = `
