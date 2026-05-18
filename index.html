@@ -6,486 +6,696 @@
   <title>Filament Collection Town</title>
   <meta name="description" content="A visual reference of 3D printing filaments organized by material type." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0f0f12;
-      --surface:   #1a1a22;
-      --card:      #22222e;
-      --border:    #2e2e3e;
-      --accent:    #7c6af7;
-      --accent2:   #4fc3f7;
-      --text:      #e2e2ec;
-      --muted:     #7b7b96;
-      --radius:    14px;
+      --bg:           #ede8df;
+      --surface:      #f6f2eb;
+      --card:         #fefcf8;
+      --border:       #d6cdbf;
+      --border-strong: #b8ad9d;
+      --accent:       #c85e2a;
+      --accent-soft:  rgba(200, 94, 42, 0.10);
+      --text:         #1c1610;
+      --muted:        #7a6c5d;
+      --muted-soft:   rgba(122, 108, 93, 0.28);
+      --radius:       9px;
+      --shadow-sm:    0 1px 3px rgba(28,22,16,0.07), 0 1px 2px rgba(28,22,16,0.05);
+      --shadow-md:    0 4px 14px rgba(28,22,16,0.10), 0 2px 4px rgba(28,22,16,0.07);
+      --shadow-lg:    0 24px 60px rgba(28,22,16,0.22), 0 8px 24px rgba(28,22,16,0.12);
     }
 
     body {
-      font-family: 'IBM Plex Sans', system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse 80% 50% at 15% 0%, rgba(124, 106, 247, 0.14), transparent 60%),
-        radial-gradient(ellipse 70% 50% at 85% 10%, rgba(79, 195, 247, 0.10), transparent 60%),
-        var(--bg);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 0 0 60px;
+      padding-bottom: 80px;
     }
 
-    @keyframes cardEnter {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes sectionEnter {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
+    /* ── HEADER ─────────────────────────────────────────────────────────────── */
     header {
-      padding: 56px 24px 36px;
-      text-align: center;
-      border-bottom: 1px dashed var(--border);
-      background: linear-gradient(180deg, #16161f 0%, var(--bg) 100%);
-      position: relative;
+      padding: 52px 24px 0;
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    .header-edition {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.4em;
-      color: var(--muted);
+    .header-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.38em;
+      color: var(--accent);
       text-transform: uppercase;
-      margin-bottom: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .header-edition::before,
-    .header-edition::after {
-      content: "";
-      width: 28px;
-      height: 1px;
-      background-image: linear-gradient(90deg, rgba(176,126,248,0.5) 50%, transparent 50%);
-      background-size: 4px 1px;
+      margin-bottom: 10px;
     }
     header h1 {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
       font-weight: 600;
-      letter-spacing: -0.025em;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-    }
-    header p {
-      margin-top: 12px;
-      color: var(--muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 28px 24px 0;
-    }
-    .filter-btn {
-      background: transparent;
-      border: 1px dashed var(--border);
-      color: var(--muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 0;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-    .filter-btn:hover {
-      border-color: var(--accent);
-      border-style: solid;
+      line-height: 1.0;
       color: var(--text);
-      transform: translateY(-1px);
+      letter-spacing: -0.015em;
     }
-    .filter-btn:focus-visible {
-      outline: 2px solid var(--accent2);
-      outline-offset: 3px;
-      border-style: solid;
+    header h1 em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--muted);
     }
-    .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      border-style: solid;
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(124, 106, 247, 0.35);
-    }
+    .header-rule { height: 1px; background: var(--border); margin-top: 22px; }
 
-    .section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.42em;
-      text-transform: uppercase;
-      color: var(--text);
-      padding: 40px 24px 18px;
+    /* ── STATS BAR ──────────────────────────────────────────────────────────── */
+    .stats-bar {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 18px 24px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      border-bottom: 1px solid var(--border);
     }
-    .section-label::before,
-    .section-label::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background-image: linear-gradient(90deg, var(--border) 50%, transparent 50%);
-      background-size: 6px 1px;
+    .stat { display: flex; align-items: baseline; gap: 6px; padding-right: 24px; }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      transition: color 0.3s;
     }
-    .section-label::before { max-width: 28px; }
+    .stat-value.accent { color: var(--accent); }
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .stat-divider {
+      width: 1px; height: 22px;
+      background: var(--border);
+      margin-right: 24px;
+      flex-shrink: 0;
+    }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 0 24px;
+    /* ── AMS BAY ────────────────────────────────────────────────────────────── */
+    .ams-bay {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 24px 24px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ams-bay-head {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 18px;
+    }
+    .ams-bay-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--text); display: flex; align-items: center; gap: 8px;
+    }
+    .ams-bay-label::before {
+      content: ""; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(200,94,42,0.18);
+    }
+    .ams-bay-rule { flex: 1; height: 1px; background: var(--border); }
+    .ams-bay-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.22em;
+      color: var(--muted); text-transform: uppercase;
     }
 
-    .card {
-      position: relative;
+    .ams-slots {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .ams-slot {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      padding: 18px 10px 14px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      animation: cardEnter 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
-    }
-    .card:focus-visible {
-      outline: 2px solid var(--accent2);
-      outline-offset: 3px;
-      border-color: var(--accent);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .card { animation: none; }
-      .filter-btn:hover { transform: none; }
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0);
-      background-size: 6px 6px;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      z-index: 1;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 8px 32px rgba(124, 106, 247, 0.18);
-    }
-    .card.hidden { display: none; }
-
-    /* ── On-the-way: just labeled (stamp) and sectioned (Inbound). ───────── */
-    /* Card itself looks identical to in-hand cards — image, hover, lightbox all stay. */
-    .card.on-the-way { overflow: visible; }
-
-    /* "IN TRANSIT" stamp — rotated, dashed, mono */
-    .otw-stamp {
-      position: absolute;
-      top: 14px;
-      left: 12px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.58rem;
-      font-weight: 700;
-      letter-spacing: 0.24em;
-      color: #c6a8fc;
-      border: 1.5px dashed #b07ef8;
-      padding: 5px 10px 4px;
-      background: rgba(20, 20, 28, 0.72);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transform: rotate(-6deg);
-      text-transform: uppercase;
-      z-index: 7;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.45);
-      text-shadow: 0 1px 0 rgba(0,0,0,0.5);
-    }
-    .otw-stamp::before { content: "→ "; opacity: 0.7; }
-
-
-
-    .card-img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      display: block;
-      background: var(--surface);
-    }
-    .card-img.missing {
-      font-family: 'IBM Plex Mono', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      background: linear-gradient(170deg, #1c1c27 0%, #14141d 100%);
-      padding: 24px;
       text-align: center;
-      color: var(--muted);
-      font-size: 0.55rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      position: relative;
     }
-    .card-img.missing .swatch {
-      width: 64px;
-      height: 64px;
+    .ams-slot.empty { background: transparent; border-style: dashed; border-color: var(--border); box-shadow: none; }
+    .ams-slot.loaded { cursor: pointer; }
+    .ams-slot.loaded:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Progress ring wraps the disc, fill from --pct (0–100) */
+    .slot-ring {
+      --pct: 100;
+      width: 78px; height: 78px;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          var(--accent) 0deg,
+          var(--accent) calc(var(--pct) * 3.6deg),
+          var(--muted-soft) calc(var(--pct) * 3.6deg),
+          var(--muted-soft) 360deg
+        );
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(28,22,16,0.10);
+    }
+    .slot-ring::before {
+      content: "";
+      position: absolute; inset: 4px;
+      background: var(--card);
+      border-radius: 50%;
+      z-index: 0;
+    }
+    .slot-ring.empty { background: none; box-shadow: none; }
+    .slot-ring.empty::before { display: none; }
+
+    /* Spool viewed end-on */
+    .slot-disc {
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      position: relative;
+      z-index: 1;
+      box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,0.18),
+        inset 0 -10px 16px rgba(0,0,0,0.22),
+        inset 0 4px 8px rgba(255,255,255,0.20),
+        0 4px 14px rgba(0,0,0,0.10);
+    }
+    /* Concentric ring suggesting wound filament */
+    .slot-disc::before {
+      content: "";
+      position: absolute; inset: 14%;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.10);
+      pointer-events: none;
+    }
+    /* Center hub */
+    .slot-disc::after {
+      content: "";
+      position: absolute; inset: 38%;
+      background: radial-gradient(circle at 35% 35%, #5a4a3a, #1a1208);
       border-radius: 50%;
       box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,0.06),
-        inset 0 -10px 20px rgba(0,0,0,0.5),
-        0 6px 18px rgba(0,0,0,0.45);
-      position: relative;
+        inset 0 1px 1px rgba(255,255,255,0.25),
+        0 1px 2px rgba(0,0,0,0.3);
     }
-    .card-img.missing .swatch::after {
-      content: "";
-      position: absolute;
-      inset: 5px;
-      border-radius: 50%;
-      border: 1px dashed rgba(255,255,255,0.16);
-    }
-    .card-img.missing .swatch-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: 0.26em;
-    }
-    .card-img.missing .swatch-meta {
-      font-size: 0.5rem;
+    .slot-disc.empty {
+      background: transparent !important;
+      border: 2px dashed var(--border-strong);
+      box-shadow: none;
       opacity: 0.55;
-      letter-spacing: 0.18em;
     }
+    .slot-disc.empty::before, .slot-disc.empty::after { display: none; }
 
-    .card-body {
-      padding: 14px 16px 16px;
-      position: relative;
-      z-index: 2;
+    .slot-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 0.24em; color: var(--muted);
     }
-    .card-name {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.3;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-    .card-meta {
-      margin-top: 8px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.66rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      letter-spacing: 0.06em;
-    }
-    .badge {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 0;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      background: transparent;
-      border: 1px solid currentColor;
-      line-height: 1.4;
-    }
-    .badge-pla   { color: #5dd49a; }
-    .badge-htpla { color: #b07ef8; }
-    .badge-petg  { color: #4fc3f7; }
-    .badge-rpla  { color: #81c784; }
-    .card-meta .status-text { text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.16em; }
-    .status-mark {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background: currentColor;
-      margin-right: 5px;
-      transform: translateY(-1px);
-    }
-    .status-mark.in-ams      { color: #4fc3f7; }
-    .status-mark.open        { color: #b07ef8; }
-    .status-mark.sealed      { color: #6b6b85; }
-    .status-mark.stored      { color: #5e8da6; }
-    .status-mark.low         { color: #fb923c; }
-    .status-mark.empty       { color: #3f3f4a; }
-    .status-mark.on-the-way  { color: #c6a8fc; }
+    .slot-num.active { color: var(--accent); }
 
-    .card-detail {
-      margin-top: 6px;
-      font-size: 0.7rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .spool-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(15, 15, 18, 0.85);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 6px 10px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 5;
-    }
-    .spool-badge svg { color: var(--accent2); }
-    .spool-badge.small svg { color: #b07ef8; }
-    
-    .spool-badge-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .spool-badge-weight {
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 600;
-      font-size: 0.82rem;
-      line-height: 1;
-      letter-spacing: 0.04em;
-    }
-    .spool-badge-weight small {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--muted);
-      font-weight: 500;
-      letter-spacing: 0.06em;
-    }
-    .spool-badge-bar {
-      height: 3px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 2px;
+    .slot-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 500;
+      color: var(--text); line-height: 1.25;
+      min-height: 2.4em; padding: 0 4px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
       overflow: hidden;
-      width: 100%;
     }
-    .spool-badge-fill {
-      height: 100%;
-      background: var(--accent2);
-      border-radius: 2px;
+    .slot-name.empty {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; letter-spacing: 0.22em;
+      color: var(--muted); text-transform: uppercase;
+      font-weight: 600;
+    }
+    .slot-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.52rem; letter-spacing: 0.14em;
+      color: var(--muted); text-transform: uppercase;
     }
 
-    .count {
-      text-align: center;
-      color: var(--muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      padding-top: 40px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    @media (max-width: 560px) {
+      .ams-slots { gap: 8px; }
+      .ams-slot { padding: 14px 6px 12px; gap: 8px; }
+      .slot-disc { width: 48px; height: 48px; }
+      .slot-name { font-size: 0.62rem; }
+      .slot-meta { display: none; }
+    }
+
+    /* ── CONTROLS ───────────────────────────────────────────────────────────── */
+    .controls {
       max-width: 1200px;
       margin: 0 auto;
-      padding-left: 24px;
-      padding-right: 24px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
     }
-    .count::before,
-    .count::after {
+    .search-wrap { position: relative; flex: 0 0 230px; }
+    .search-icon {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); pointer-events: none; display: flex;
+    }
+    #search {
+      width: 100%;
+      padding: 8px 10px 8px 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+    #search::placeholder { color: var(--muted); }
+    #search:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-sm);
+    }
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      transition: all 0.14s;
+      box-shadow: var(--shadow-sm);
+    }
+    .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .pill.active {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+      box-shadow: 0 2px 10px rgba(200,94,42,0.28), var(--shadow-sm);
+    }
+    .pill-count { font-size: 0.56rem; opacity: 0.7; font-weight: 400; }
+    .pill.active .pill-count { opacity: 0.85; }
+
+    /* ── SECTION LABELS ─────────────────────────────────────────────────────── */
+    .section-head {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 36px 24px 14px;
+      display: flex; align-items: baseline; gap: 14px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 700;
+      color: var(--text); letter-spacing: -0.01em; white-space: nowrap;
+    }
+    .section-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.2em;
+      color: var(--muted); text-transform: uppercase;
+    }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* ── GRID ───────────────────────────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(218px, 1fr));
+      gap: 16px; padding: 0 24px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    /* ── CARD ───────────────────────────────────────────────────────────────── */
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .card { animation: none !important; } }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden; position: relative;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      animation: cardIn 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+      box-shadow: var(--shadow-sm);
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
+    }
+
+    /* ── IMAGE AREA ─────────────────────────────────────────────────────────── */
+    .card-img-wrap { position: relative; aspect-ratio: 1; overflow: hidden; }
+    .card-img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; cursor: zoom-in;
+      transition: transform 0.32s ease;
+    }
+    .card:hover .card-img { transform: scale(1.04); }
+
+    /* Swatch — color fills the whole image area */
+    .card-swatch {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; padding: 24px; text-align: center;
+      position: relative;
+    }
+    .card-swatch::after {
       content: "";
-      flex: 1;
-      height: 1px;
-      background-image: linear-gradient(90deg, var(--border) 50%, transparent 50%);
-      background-size: 6px 1px;
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      background-size: 128px;
+      pointer-events: none; mix-blend-mode: overlay;
+    }
+    .swatch-orb {
+      width: 68px; height: 68px; border-radius: 50%;
+      box-shadow:
+        inset 0 -10px 18px rgba(0,0,0,0.22),
+        inset 0 5px 10px rgba(255,255,255,0.28),
+        0 8px 24px rgba(0,0,0,0.20);
+      position: relative; z-index: 1;
+    }
+    .swatch-orb::after {
+      content: "";
+      position: absolute; top: 10%; left: 15%;
+      width: 30%; height: 22%;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      filter: blur(4px);
+    }
+    .swatch-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      position: relative; z-index: 1;
     }
 
-    @media (max-width: 480px) {
-      .grid { grid-template-columns: 1fr; gap: 16px; padding: 0 16px; }
+    /* ── OVERLAYS ───────────────────────────────────────────────────────────── */
+    .weight-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(254,252,248,0.92);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(214,205,191,0.7);
+      border-radius: 6px; padding: 5px 8px;
+      display: flex; align-items: center; gap: 6px;
+      z-index: 5; box-shadow: var(--shadow-sm);
     }
+    .weight-badge svg { color: var(--muted); flex-shrink: 0; }
+    .weight-info { display: flex; flex-direction: column; gap: 3px; }
+    .weight-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--text); line-height: 1;
+    }
+    .weight-num small { font-size: 0.56rem; color: var(--muted); font-weight: 400; }
+    .weight-bar { height: 3px; background: var(--muted-soft); border-radius: 2px; overflow: hidden; min-width: 28px; }
+    .weight-fill { height: 100%; border-radius: 2px; background: var(--accent); }
 
-    /* Lightbox */
-    dialog#lightbox { margin: auto; border: none; background: transparent; padding: 0; max-width: 100vw; max-height: 100vh; overflow: visible; outline: none; }
-    dialog#lightbox::backdrop { background: rgba(10, 10, 14, 0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .lb-content { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .lb-content img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-    .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 10; }
-    .lb-nav:hover { background: var(--accent); }
-    #lb-prev { left: -60px; }
-    #lb-next { right: -60px; }
-    #lb-close { position: absolute; top: -40px; right: -40px; background: none; border: none; color: var(--muted); font-size: 32px; cursor: pointer; z-index: 10; }
-    #lb-close:hover { color: white; }
-    #lb-caption { margin-top: 16px; color: var(--text); font-weight: 500; font-size: 1.1rem; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    @media (max-width: 768px) {
-      #lb-prev { left: 10px; } #lb-next { right: 10px; }
-      #lb-close { top: 10px; right: 10px; color: white; background: rgba(0,0,0,0.5); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;}
+    .status-chip {
+      position: absolute; bottom: 8px; left: 8px;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 8px; border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 5; border: 1px solid transparent;
+    }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+    .s-in-ams   { background: rgba(40,90,60,0.86);  color: #b8f0d0; border-color: rgba(100,200,140,0.2); }
+    .s-in-ams   .status-dot { background: #70d4a0; }
+    .s-sealed   { background: rgba(20,18,14,0.72);  color: #c0b8a8; border-color: rgba(255,255,255,0.08); }
+    .s-sealed   .status-dot { background: #887870; }
+    .s-stored   { background: rgba(40,68,96,0.82);  color: #b8d0e8; border-color: rgba(120,180,220,0.18); }
+    .s-stored   .status-dot { background: #78b0d8; }
+    .s-open     { background: rgba(80,60,130,0.82); color: #d0c0f0; border-color: rgba(160,130,220,0.18); }
+    .s-open     .status-dot { background: #a888e8; }
+    .s-low      { background: rgba(180,70,20,0.88); color: #fde0c8; border-color: rgba(250,150,80,0.2); }
+    .s-low      .status-dot { background: #f89060; }
+    .s-empty    { background: rgba(50,44,36,0.72);  color: #988878; border-color: rgba(255,255,255,0.06); }
+    .s-empty    .status-dot { background: #685848; }
+    .s-inbound  { background: rgba(90,50,150,0.86); color: #e0c8ff; border-color: rgba(190,140,255,0.2); }
+    .s-inbound  .status-dot { background: #c098f8; box-shadow: 0 0 0 2px rgba(192,152,248,0.3); }
+
+    .otw-banner {
+      position: absolute; top: 0; left: 0; right: 0;
+      background: linear-gradient(90deg, rgba(80,40,140,0.92), rgba(60,30,110,0.92));
+      padding: 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #e0c8ff; z-index: 6;
+      display: flex; align-items: center; gap: 7px;
     }
     .count-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(20, 20, 28, 0.78);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid var(--accent);
-      color: #c6a8fc;
-      font-family: 'IBM Plex Mono', monospace;
-      padding: 4px 9px;
-      border-radius: 0;
-      font-weight: 600;
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(254,252,248,0.92);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--accent); color: var(--accent);
+      border-radius: 100px; padding: 3px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; font-weight: 700; letter-spacing: 0.1em;
       z-index: 5;
+    }
+
+    /* Recycled badge — prominent circular SVG mark */
+    .recycled-badge {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4a9a5a 0%, #2d6b3e 100%);
+      border: 1.5px solid rgba(220, 248, 220, 0.45);
+      color: #f0fbf0;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 6;
+      box-shadow:
+        0 4px 12px rgba(40, 90, 50, 0.40),
+        inset 0 1px 1px rgba(255,255,255,0.30),
+        inset 0 -2px 4px rgba(0,0,0,0.18);
+      transition: transform 0.2s ease;
+    }
+    .recycled-badge svg { width: 18px; height: 18px; }
+    .card:hover .recycled-badge { transform: rotate(-12deg) scale(1.08); }
+    /* Soft outer glow so it pops on busy images */
+    .recycled-badge::before {
+      content: "";
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(74,154,90,0.35) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ── CARD BODY ──────────────────────────────────────────────────────────── */
+    .card-body { padding: 12px 14px 14px; }
+    .card-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600; line-height: 1.3;
+      color: var(--text); letter-spacing: -0.01em;
+    }
+    .card-meta { margin-top: 7px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .mat-badge {
+      padding: 2px 6px; border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.54rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;
+    }
+    .m-pla   { background: #e5f5ec; color: #1e6640; }
+    .m-htpla { background: #f0ebff; color: #5230a0; }
+    .m-petg  { background: #e5f2ff; color: #1050a0; }
+    .m-rpla  { background: #edf5e0; color: #386020; }
+    .m-other { background: var(--surface); color: var(--muted); }
+    .card-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; color: var(--muted);
+      letter-spacing: 0.06em; margin-left: auto;
+    }
+
+    /* ── COUNT FOOTER ───────────────────────────────────────────────────────── */
+    .count-footer {
+      max-width: 1200px; margin: 40px auto 0;
+      padding: 0 24px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .count-line { flex: 1; height: 1px; background: var(--border); }
+    .count-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.26em;
+      text-transform: uppercase; color: var(--muted); white-space: nowrap;
+    }
+
+    /* ── EMPTY STATE ────────────────────────────────────────────────────────── */
+    .empty-state {
+      padding: 60px 24px; text-align: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .empty-state p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-style: italic; color: var(--muted);
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────────────────────────────── */
+    dialog#lightbox {
+      margin: auto; border: none; background: transparent;
+      padding: 0; max-width: 100vw; max-height: 100vh;
+      overflow: visible; outline: none;
+    }
+    dialog#lightbox::backdrop {
+      background: rgba(20, 16, 10, 0.90);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    .lb-wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; position: relative; }
+    .lb-img-area { position: relative; }
+    #lb-img {
+      max-width: min(680px, 90vw); max-height: 72vh;
+      object-fit: contain; border-radius: var(--radius);
+      box-shadow: var(--shadow-lg); display: block;
+    }
+    .lb-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(254,252,248,0.12);
+      border: 1px solid rgba(254,252,248,0.18);
+      color: white; width: 44px; height: 44px; border-radius: 50%;
+      font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      z-index: 10; backdrop-filter: blur(4px);
+    }
+    .lb-nav:hover { background: rgba(200,94,42,0.55); border-color: var(--accent); }
+    #lb-prev { left: -58px; } #lb-next { right: -58px; }
+    #lb-close {
+      position: absolute; top: -46px; right: 0;
+      background: none; border: none;
+      color: rgba(255,255,255,0.55); font-size: 22px;
+      cursor: pointer; padding: 4px; line-height: 1;
+      transition: color 0.15s;
+    }
+    #lb-close:hover { color: white; }
+    .lb-details { text-align: center; max-width: min(680px, 90vw); }
+    #lb-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 600;
+      color: #fdfaf4; line-height: 1.2;
+    }
+    #lb-meta { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .lb-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(253,250,244,0.5); padding: 3px 9px;
+      border: 1px solid rgba(253,250,244,0.14); border-radius: 100px;
+    }
+    .lb-chip.hi { color: #f0b888; border-color: rgba(240,184,136,0.28); }
+
+    @media (max-width: 720px) {
+      #lb-prev { left: 8px; } #lb-next { right: 8px; }
+      #lb-close { color: white; }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      header, .stats-bar, .controls, .section-head, .count-footer { padding-left: 16px; padding-right: 16px; }
+      .grid { padding: 0 16px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+      .search-wrap { flex: 1 1 100%; }
+      .stat-value { font-size: 1.3rem; }
+    }
+    @media (max-width: 380px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .stat-divider { margin-right: 14px; }
+      .stat { padding-right: 14px; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Filament Collection Town</h1>
-  <p>3D printing filaments — visual color reference</p>
+  <div class="header-eyebrow">Proto-Pasta · Bambu Lab · Personal Collection</div>
+  <h1>Filament <em>Collection</em></h1>
+  <div class="header-rule"></div>
 </header>
 
-<div class="filters">
-  <button class="filter-btn active" data-filter="all">All</button>
-  <button class="filter-btn" data-filter="PLA">PLA</button>
-  <button class="filter-btn" data-filter="HTPLA">HTPLA</button>
-  <button class="filter-btn" data-filter="PETG">PETG</button>
-  <button class="filter-btn" data-filter="in-ams">In AMS</button>
-  <button class="filter-btn" data-filter="inbound">Inbound</button>
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-value" id="stat-total">—</span>
+    <span class="stat-label">filaments</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <span class="stat-value" id="stat-weight">—</span>
+    <span class="stat-label">total stock</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <span class="stat-value" id="stat-ams">—</span>
+    <span class="stat-label">in AMS</span>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat">
+    <span class="stat-value" id="stat-inbound">—</span>
+    <span class="stat-label">inbound</span>
+  </div>
+</div>
+
+<section class="ams-bay">
+  <div class="ams-bay-head">
+    <span class="ams-bay-label">AMS Bay</span>
+    <div class="ams-bay-rule"></div>
+    <span class="ams-bay-status" id="ams-status">— loaded</span>
+  </div>
+  <div class="ams-slots" id="ams-slots"></div>
+</section>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+    </span>
+    <input type="search" id="search" placeholder="Search… ( / )" autocomplete="off" />
+  </div>
+  <div class="pills" id="filter-pills">
+    <button class="pill active" data-filter="all">All <span class="pill-count" id="cnt-all"></span></button>
+    <button class="pill" data-filter="PLA">PLA <span class="pill-count" id="cnt-pla"></span></button>
+    <button class="pill" data-filter="HTPLA">HTPLA <span class="pill-count" id="cnt-htpla"></span></button>
+    <button class="pill" data-filter="PETG">PETG <span class="pill-count" id="cnt-petg"></span></button>
+    <button class="pill" data-filter="in-ams">In AMS <span class="pill-count" id="cnt-ams"></span></button>
+    <button class="pill" data-filter="inbound">Inbound <span class="pill-count" id="cnt-inbound"></span></button>
+  </div>
 </div>
 
 <div id="gallery"></div>
-<p class="count" id="count"></p>
+<div class="count-footer">
+  <div class="count-line"></div>
+  <span class="count-text" id="count"></span>
+  <div class="count-line"></div>
+</div>
 
 <dialog id="lightbox">
-  <div class="lb-content">
-    <button id="lb-close">×</button>
-    <button class="lb-nav" id="lb-prev">‹</button>
-    <img id="lb-img" src="" alt="">
-    <button class="lb-nav" id="lb-next">›</button>
-    <div id="lb-caption"></div>
+  <div class="lb-wrap">
+    <div class="lb-img-area">
+      <button id="lb-close">&#x2715;</button>
+      <button class="lb-nav" id="lb-prev">&#x2039;</button>
+      <img id="lb-img" src="" alt="" />
+      <button class="lb-nav" id="lb-next">&#x203a;</button>
+    </div>
+    <div class="lb-details">
+      <div id="lb-name"></div>
+      <div id="lb-meta"></div>
+    </div>
   </div>
 </dialog>
 
@@ -522,236 +732,382 @@ const FILAMENTS = [
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BADGE = { PLA: "badge-pla", HTPLA: "badge-htpla", PETG: "badge-petg" };
+const SWATCHES = {
+  "red-purple": { grad:"linear-gradient(145deg,#c44070 0%,#701830 100%)", orb:"linear-gradient(145deg,#d05080 0%,#801a38 100%)", text:"#fde8ef", solid:"#a8305a" },
+  pink:         { grad:"linear-gradient(145deg,#f5a8cc 0%,#d04888 100%)", orb:"linear-gradient(145deg,#f8b8d8 0%,#d85898 100%)", text:"#3a0a20", solid:"#d04888" },
+  purple:       { grad:"linear-gradient(145deg,#a878e8 0%,#502898 100%)", orb:"linear-gradient(145deg,#b888f0 0%,#6030a8 100%)", text:"#f0e8ff", solid:"#7848c8" },
+  blue:         { grad:"linear-gradient(145deg,#60a0e0 0%,#1840a0 100%)", orb:"linear-gradient(145deg,#70b0f0 0%,#2050b0 100%)", text:"#e0f0ff", solid:"#3070c0" },
+  teal:         { grad:"linear-gradient(145deg,#40c8b8 0%,#106858 100%)", orb:"linear-gradient(145deg,#50d8c8 0%,#187870 100%)", text:"#d8f8f4", solid:"#1f988a" },
+  green:        { grad:"linear-gradient(145deg,#60c050 0%,#185828 100%)", orb:"linear-gradient(145deg,#70d060 0%,#206830 100%)", text:"#e8f8e0", solid:"#3a8a3a" },
+  red:          { grad:"linear-gradient(145deg,#e83848 0%,#880818 100%)", orb:"linear-gradient(145deg,#f04858 0%,#980a20 100%)", text:"#ffe0e4", solid:"#c01828" },
+  orange:       { grad:"linear-gradient(145deg,#f89838 0%,#b84808 100%)", orb:"linear-gradient(145deg,#faa848 0%,#c85810 100%)", text:"#fff0e0", solid:"#d86818" },
+  yellow:       { grad:"linear-gradient(145deg,#f8d840 0%,#c09000 100%)", orb:"linear-gradient(145deg,#ffe850 0%,#d0a000 100%)", text:"#281e00", solid:"#d8a818" },
+  brown:        { grad:"linear-gradient(145deg,#b07040 0%,#582808 100%)", orb:"linear-gradient(145deg,#c08050 0%,#683010 100%)", text:"#fae8d8", solid:"#805030" },
+  black:        { grad:"linear-gradient(145deg,#504858 0%,#080610 100%)", orb:"linear-gradient(145deg,#605868 0%,#100818 100%)", text:"#d8d0e0", solid:"#383040" },
+  white:        { grad:"linear-gradient(145deg,#fafaf8 0%,#c8c4bc 100%)", orb:"linear-gradient(145deg,#ffffff 0%,#d8d4cc 100%)", text:"#2a2820", solid:"#b8b0a0" },
+  natural:      { grad:"linear-gradient(145deg,#f0e8c8 0%,#c0b088 100%)", orb:"linear-gradient(145deg,#f8f0d8 0%,#c8b898 100%)", text:"#302818", solid:"#c8a878" },
+  "off-white":  { grad:"linear-gradient(145deg,#f4f0e4 0%,#c4bc9c 100%)", orb:"linear-gradient(145deg,#fcf8ec 0%,#ccc4a8 100%)", text:"#28201a", solid:"#bcb088" },
+  dark:         { grad:"linear-gradient(145deg,#484060 0%,#101018 100%)", orb:"linear-gradient(145deg,#585070 0%,#181020 100%)", text:"#c8c0d8", solid:"#403858" },
+  rainbow:      { grad:"linear-gradient(145deg,#e83838 0%,#e89820 20%,#d8d010 40%,#38c038 55%,#3870e0 75%,#b030c0 100%)", orb:"linear-gradient(135deg,#ff4444,#ff8800,#ffe000,#44cc44,#4488ff,#cc44cc)", text:"#ffffff", solid:"#c85090" },
+};
 
-// Map a precomputed gallery label (from the publish script) to its CSS class.
-// Labels come from publish-filament-gallery.py, derived from the five
-// orthogonal state fields. This mapping just picks the swatch color.
-function markClass(label) {
-  if (!label) return "";
-  if (label.startsWith("In AMS")) return "in-ams";
-  return { "Inbound": "on-the-way", "Sealed": "sealed", "Open": "open",
-           "Stored": "stored", "Low": "low", "Empty": "empty" }[label] || "";
+const SPOOL_LABEL = { full:"Full spool", sample:"Sample", remnant:"Remnant" };
+
+function swatchFor(f) {
+  const key = (f.color || "").toLowerCase();
+  for (const k of Object.keys(SWATCHES)) if (key.includes(k)) return SWATCHES[k];
+  return { grad:"linear-gradient(145deg,#9878e8 0%,#4830a8 100%)", orb:"linear-gradient(145deg,#a888f0 0%,#5838b8 100%)", text:"#f0e8ff" };
 }
 
-function render(filter = "all") {
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
+function statusClass(label) {
+  if (!label) return "";
+  if (label.startsWith("In AMS")) return "s-in-ams";
+  return { Inbound:"s-inbound", Sealed:"s-sealed", Open:"s-open", Stored:"s-stored", Low:"s-low", Empty:"s-empty" }[label] || "";
+}
 
-  const inHandGroups = {};
-  const inTransit = [];
-  FILAMENTS.forEach(f => {
-    const onTheWay = f.delivery === "on-the-way";
-    if (filter === "inbound") {
-      if (!onTheWay) return;
-      inTransit.push(f);
-      return;
+function matBadge(f) {
+  if (f.is_recycled) return { cls:"m-rpla", text:"rPLA" };
+  const m = f.material.toLowerCase();
+  if (m === "htpla") return { cls:"m-htpla", text:"HTPLA" };
+  if (m === "pla")   return { cls:"m-pla",   text:"PLA"   };
+  if (m === "petg")  return { cls:"m-petg",  text:"PETG"  };
+  return { cls:"m-other", text:f.material };
+}
+
+// Static SVG icons — safe to set via innerHTML, no user data involved
+const SVG_SPOOL  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="4" rx="8" ry="3"/><ellipse cx="12" cy="20" rx="8" ry="3"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15" x2="16" y2="15"/></svg>';
+const SVG_SAMPLE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>';
+const SVG_RECYCLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 12.001 3a1.78 1.78 0 0 1 1.564.91l1.205 2.092"/><path d="M13.378 9.633 17.473 10.73 18.57 6.633"/></svg>';
+
+function mk(tag, cls) {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  return el;
+}
+function txt(tag, cls, content) {
+  const el = mk(tag, cls);
+  el.textContent = content;
+  return el;
+}
+
+// ── Global stats ──────────────────────────────────────────────────────────────
+function computeStats() {
+  let total = 0, weightG = 0, ams = 0, inbound = 0,
+      cntPla = 0, cntHtpla = 0, cntPetg = 0;
+  FILAMENTS.forEach(function(f) {
+    total++;
+    weightG += f.remaining || 0;
+    if (f["ams-slot"] != null) ams++;
+    if (f.delivery === "on-the-way") inbound++;
+    const m = f.material.toLowerCase();
+    if (m === "pla") cntPla++;
+    else if (m === "htpla") cntHtpla++;
+    else if (m === "petg") cntPetg++;
+  });
+  document.getElementById("stat-total").textContent   = total;
+  document.getElementById("stat-weight").textContent  = (weightG / 1000).toFixed(1) + "kg";
+  document.getElementById("stat-ams").textContent     = ams;
+  document.getElementById("stat-inbound").textContent = inbound;
+  if (ams > 0) document.getElementById("stat-ams").classList.add("accent");
+  document.getElementById("cnt-all").textContent     = total;
+  document.getElementById("cnt-pla").textContent     = cntPla;
+  document.getElementById("cnt-htpla").textContent   = cntHtpla;
+  document.getElementById("cnt-petg").textContent    = cntPetg;
+  document.getElementById("cnt-ams").textContent     = ams;
+  document.getElementById("cnt-inbound").textContent = inbound;
+}
+
+// ── Card builder — DOM API only for user data ─────────────────────────────────
+var lbData = [];
+
+function buildCard(f, globalIdx) {
+  const card = mk("div", "card");
+  card.style.animationDelay = Math.min(globalIdx * 22, 550) + "ms";
+
+  const wrap = mk("div", "card-img-wrap");
+
+  if (f.image) {
+    const img = mk("img", "card-img lb-trigger");
+    img.src = f.image;
+    img.alt = f.name;
+    img.dataset.idx = lbData.length;
+    img.loading = lbData.length < 6 ? "eager" : "lazy";
+    lbData.push(f);
+    wrap.appendChild(img);
+  } else {
+    const sw = swatchFor(f);
+    wrap.classList.add("card-swatch");
+    wrap.style.background = sw.grad;
+    wrap.style.color = sw.text;
+    const orb = mk("div", "swatch-orb");
+    orb.style.background = sw.orb;
+    wrap.appendChild(orb);
+    wrap.appendChild(txt("span", "swatch-name", (f.color || "—").toUpperCase()));
+  }
+
+  // On-the-way banner
+  if (f.delivery === "on-the-way") {
+    const banner = mk("div", "otw-banner");
+    banner.appendChild(txt("span", null, "→"));
+    banner.appendChild(txt("span", null, " In Transit"));
+    wrap.appendChild(banner);
+  }
+
+  // Count badge
+  if (f.count > 1) {
+    wrap.appendChild(txt("div", "count-badge", f.count + "×"));
+  }
+
+  // Weight badge
+  const weightNum = parseInt(f.weight) || 0;
+  if (f.weight) {
+    const wb = mk("div", "weight-badge");
+    const iconSpan = mk("span", null);
+    // Static SVG, no user data
+    iconSpan.innerHTML = weightNum <= 50 ? SVG_SAMPLE : SVG_SPOOL;
+    wb.appendChild(iconSpan);
+    if (f.used > 0 && weightNum > 0) {
+      const pct = Math.max(0, Math.min(100, (f.remaining / weightNum) * 100));
+      const info = mk("div", "weight-info");
+      const numEl = mk("div", "weight-num");
+      numEl.appendChild(document.createTextNode(Math.round(f.remaining) + "g "));
+      numEl.appendChild(txt("small", null, "/ " + weightNum + "g"));
+      const bar = mk("div", "weight-bar");
+      const fill = mk("div", "weight-fill");
+      fill.style.width = pct + "%";
+      bar.appendChild(fill);
+      info.appendChild(numEl);
+      info.appendChild(bar);
+      wb.appendChild(info);
+    } else {
+      wb.appendChild(txt("div", "weight-num", f.weight));
     }
-    if (filter === "in-ams") {
-      if (f["ams-slot"] == null) return;
-      (inHandGroups[f.material] = inHandGroups[f.material] || []).push(f);
-      return;
-    }
-    if (filter !== "all" && f.material !== filter) return;
-    if (onTheWay) inTransit.push(f);
-    else (inHandGroups[f.material] = inHandGroups[f.material] || []).push(f);
+    wrap.appendChild(wb);
+  }
+
+  // Status chip
+  if (f.label) {
+    const chip = mk("div", "status-chip " + statusClass(f.label));
+    chip.appendChild(mk("span", "status-dot"));
+    chip.appendChild(document.createTextNode(f.label));
+    wrap.appendChild(chip);
+  }
+
+  // Recycled badge — prominent green circular SVG mark
+  if (f.is_recycled) {
+    const rb = mk("div", "recycled-badge");
+    rb.title = "Recycled material";
+    rb.setAttribute("aria-label", "Recycled material");
+    // Static SVG, no user data
+    rb.innerHTML = SVG_RECYCLE;
+    wrap.appendChild(rb);
+  }
+
+  card.appendChild(wrap);
+
+  const body = mk("div", "card-body");
+  body.appendChild(txt("div", "card-name", f.name));
+  const meta = mk("div", "card-meta");
+  const mb = matBadge(f);
+  meta.appendChild(txt("span", "mat-badge " + mb.cls, mb.text));
+  const spoolSub = SPOOL_LABEL[f.spool] || f.spool || "";
+  if (spoolSub) meta.appendChild(txt("span", "card-sub", spoolSub));
+  body.appendChild(meta);
+  card.appendChild(body);
+
+  return card;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+var activeFilter = "all";
+var searchQuery  = "";
+
+function render() {
+  const gallery = document.getElementById("gallery");
+  while (gallery.firstChild) gallery.removeChild(gallery.firstChild);
+  lbData = [];
+
+  const q = searchQuery.trim().toLowerCase();
+
+  function keeps(f) {
+    if (q && !f.name.toLowerCase().includes(q) && !(f.color || "").toLowerCase().includes(q)) return false;
+    if (activeFilter === "in-ams")  return f["ams-slot"] != null;
+    if (activeFilter === "inbound") return f.delivery === "on-the-way";
+    if (activeFilter === "all")     return true;
+    return f.material === activeFilter;
+  }
+
+  var inHand = {}, inTransit = [];
+  FILAMENTS.forEach(function(f) {
+    if (!keeps(f)) return;
+    if (f.delivery === "on-the-way") { inTransit.push(f); return; }
+    if (!inHand[f.material]) inHand[f.material] = [];
+    inHand[f.material].push(f);
   });
 
-  const order = ["PLA", "HTPLA", "PETG"];
-  let total = 0;
+  var total = 0;
+  const ORDER = ["PLA", "HTPLA", "PETG", "Support"];
 
-  let lbItems = [];
-
-  const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
-
-  const SWATCH = {
-    pink:   "linear-gradient(135deg, #f9a8d4, #db2777)",
-    purple: "linear-gradient(135deg, #c084fc, #6d28d9)",
-    blue:   "linear-gradient(135deg, #60a5fa, #1d4ed8)",
-    red:    "linear-gradient(135deg, #fb7185, #b91c1c)",
-    green:  "linear-gradient(135deg, #86efac, #15803d)",
-    teal:   "linear-gradient(135deg, #5eead4, #0f766e)",
-    orange: "linear-gradient(135deg, #fdba74, #c2410c)",
-    yellow: "linear-gradient(135deg, #fde68a, #b45309)",
-    brown:  "linear-gradient(135deg, #c2855a, #5a3a22)",
-    black:  "linear-gradient(135deg, #4b4b55, #0c0c12)",
-    white:  "linear-gradient(135deg, #f5f5f5, #b8b8c2)",
-    grey:   "linear-gradient(135deg, #a1a1aa, #3f3f46)",
-    gray:   "linear-gradient(135deg, #a1a1aa, #3f3f46)"
-  };
-  function swatchFor(f) {
-    const key = (f.color || f.name || "").toLowerCase();
-    for (const k of Object.keys(SWATCH)) if (key.includes(k)) return SWATCH[k];
-    return "linear-gradient(135deg, #7c6af7, #4fc3f7)";
-  }
-
-  const ICON_SPOOL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="4" rx="8" ry="3"/><ellipse cx="12" cy="20" rx="8" ry="3"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15" x2="16" y2="15"/></svg>`;
-  const ICON_COIL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
-
-  function buildCard(f) {
-      const onTheWay = f.delivery === "on-the-way";
-      const card = document.createElement("div");
-      card.className = onTheWay ? "card on-the-way" : "card";
-
-      const mc = markClass(f.label);
-      const statusMark = mc ? `<span class="status-mark ${mc}"></span>` : "";
-      const statusLabel = f.label || "";
-      const weightLabel = f.weight || "";
-      const spoolLabel = f.spool ? (SPOOL_LABELS[f.spool] || f.spool) : "";
-      // detail parts now just show spool type since weight is on the icon badge
-      const detailParts = [spoolLabel].filter(Boolean).join(" · ");
-
-      const weightNum = parseInt(f.weight) || 0;
-      let iconSvg = ICON_SPOOL;
-      let sizeClass = "large";
-      if (weightNum <= 50) { iconSvg = ICON_COIL; sizeClass = "small"; }
-      else if (weightNum <= 500) { sizeClass = "medium"; }
-
-      let spoolBadgeHtml = "";
-      if (f.weight) {
-        if (f.used > 0 && weightNum > 0) {
-          const percent = Math.max(0, Math.min(100, (f.remaining / weightNum) * 100));
-          spoolBadgeHtml = `
-            <div class="spool-badge ${sizeClass}">
-              ${iconSvg}
-              <div class="spool-badge-info">
-                <div class="spool-badge-weight">${Math.round(f.remaining)}g <small>/ ${weightNum}g</small></div>
-                <div class="spool-badge-bar"><div class="spool-badge-fill" style="width: ${percent}%;"></div></div>
-              </div>
-            </div>`;
-        } else {
-          spoolBadgeHtml = `
-            <div class="spool-badge ${sizeClass}">
-              ${iconSvg}
-              <div class="spool-badge-weight">${f.weight}</div>
-            </div>`;
-        }
-      }
-
-      let imgTag;
-      if (f.image) {
-        const idx = lbItems.length;
-        lbItems.push(f);
-        const loadingAttr = idx < 5 ? 'eager' : 'lazy';
-        imgTag = `<img class="card-img lb-trigger" src="${f.image}" alt="${f.name}" data-idx="${idx}" loading="${loadingAttr}" style="cursor: zoom-in;" />`;
-      } else {
-        const sw = swatchFor(f);
-        imgTag = `<div class="card-img missing">
-          <div class="swatch" style="background: ${sw};"></div>
-          <div class="swatch-label">${(f.color || f.name || "—").toUpperCase()}</div>
-          <div class="swatch-meta">${f.material}${f.weight ? " · " + f.weight : ""}</div>
-        </div>`;
-      }
-
-      const countBadgeHtml = (f.count > 1 ? `<div class="count-badge">${f.count}× Spools</div>` : "")
-        + (onTheWay ? `<div class="otw-stamp">In Transit</div>` : "");
-
-      const matLower = f.material.toLowerCase();
-      let badgeClass = '';
-      if (f.is_recycled) badgeClass = 'badge-rpla';
-      else if (matLower.includes('htpla')) badgeClass = 'badge-htpla';
-      else if (matLower.includes('pla')) badgeClass = 'badge-pla';
-      else if (matLower.includes('petg')) badgeClass = 'badge-petg';
-
-      const badgeLabel = f.is_recycled && f.material === 'PLA' ? '♻️ rPLA' : (f.is_recycled ? '♻️ ' + f.material : f.material);
-      const titlePrefix = f.is_recycled && !f.name.toLowerCase().includes('recycled') ? '♻️ ' : '';
-
-      card.innerHTML = `
-        ${imgTag}
-        ${countBadgeHtml}
-        ${spoolBadgeHtml}
-        <div class="card-body">
-          <div class="card-name">${titlePrefix}${f.name}</div>
-          <div class="card-meta">
-            <span class="badge ${badgeClass}">${badgeLabel}</span>
-            ${statusMark ? `<span class="status-text">${statusMark}${statusLabel}</span>` : ""}
-            ${detailParts ? `<span style="margin-left: auto; text-align: right; opacity: 0.8;">${detailParts}</span>` : ""}
-          </div>
-        </div>`;
-      return card;
-  }
-
-  function renderSection(labelText, items) {
+  function renderSection(title, sub, items) {
     if (!items || !items.length) return;
-    const startIndex = total;
-    total += items.length;
-    const labelEl = document.createElement("div");
-    labelEl.className = "section-label";
-    labelEl.textContent = labelText;
-    gallery.appendChild(labelEl);
-    const grid = document.createElement("div");
-    grid.className = "grid";
-    items.forEach((f, i) => {
-      const card = buildCard(f);
-      const globalIdx = startIndex + i;
-      // Stagger cards on initial load; cap delay so later cards don't take forever
-      card.style.animationDelay = `${Math.min(globalIdx * 25, 600)}ms`;
-      grid.appendChild(card);
-    });
+    const head = mk("div", "section-head");
+    head.appendChild(txt("span", "section-title", title));
+    if (sub) head.appendChild(txt("span", "section-sub", sub));
+    head.appendChild(mk("div", "section-line"));
+    gallery.appendChild(head);
+
+    const grid = mk("div", "grid");
+    items.forEach(function(f) { grid.appendChild(buildCard(f, total++)); });
     gallery.appendChild(grid);
   }
 
-  order.forEach(mat => renderSection(mat, inHandGroups[mat]));
-  renderSection("Inbound", inTransit);
+  if (activeFilter === "in-ams" || activeFilter === "inbound") {
+    const all = Object.values(inHand).reduce(function(a, b) { return a.concat(b); }, []).concat(inTransit);
+    if (all.length) renderSection(activeFilter === "in-ams" ? "In AMS" : "Inbound", null, all);
+  } else {
+    ORDER.forEach(function(mat) { renderSection(mat, null, inHand[mat]); });
+    Object.keys(inHand).filter(function(m) { return !ORDER.includes(m); })
+      .forEach(function(mat) { renderSection(mat, null, inHand[mat]); });
+    if (inTransit.length) renderSection("Inbound", "on the way", inTransit);
+  }
 
-  document.getElementById("count").textContent = `${total} filament${total !== 1 ? "s" : ""}`;
+  if (total === 0) {
+    const empty = mk("div", "empty-state");
+    const p = mk("p");
+    p.textContent = "No filaments match “" + (q || activeFilter) + "”";
+    empty.appendChild(p);
+    gallery.appendChild(empty);
+  }
 
-  // Attach lightbox listeners
-  document.querySelectorAll(".lb-trigger").forEach(img => {
-    img.onclick = (e) => {
+  document.getElementById("count").textContent = total + " filament" + (total !== 1 ? "s" : "");
+
+  document.querySelectorAll(".lb-trigger").forEach(function(img) {
+    img.onclick = function(e) {
       e.stopPropagation();
-      openLightbox(parseInt(img.dataset.idx));
+      openLb(parseInt(img.dataset.idx));
     };
   });
 }
 
-// Lightbox logic
-let lbIndex = 0;
-const lb = document.getElementById("lightbox");
-const lbImg = document.getElementById("lb-img");
-const lbCaption = document.getElementById("lb-caption");
-let currentLbItems = [];
-
-function openLightbox(index) {
-  // Grab current lbItems from the DOM state by re-querying or relying on a global
-  // Since lbItems is localized to render(), we need to pass it out or just rebuild it.
-  currentLbItems = [];
-  document.querySelectorAll(".lb-trigger").forEach(img => {
-    currentLbItems.push({ src: img.src, name: img.alt });
+// ── AMS Bay visualization ─────────────────────────────────────────────────────
+function renderAms() {
+  const slotsEl = document.getElementById("ams-slots");
+  const bay = [null, null, null, null];
+  let loaded = 0;
+  FILAMENTS.forEach(function(f) {
+    const s = f["ams-slot"];
+    if (s !== null && s >= 1 && s <= 4 && !bay[s - 1]) {
+      bay[s - 1] = f;
+      loaded++;
+    }
   });
-  lbIndex = index;
-  updateLightbox();
-  lb.showModal();
+
+  document.getElementById("ams-status").textContent = loaded + " of 4 loaded";
+
+  while (slotsEl.firstChild) slotsEl.removeChild(slotsEl.firstChild);
+
+  for (let i = 0; i < 4; i++) {
+    const f = bay[i];
+    const slotEl = mk("div", f ? "ams-slot loaded" : "ams-slot empty");
+
+    const disc = mk("div", f ? "slot-disc" : "slot-disc empty");
+    if (f) disc.style.background = swatchFor(f).orb;
+    slotEl.appendChild(disc);
+
+    const numStr = (i + 1).toString().padStart(2, "0");
+    slotEl.appendChild(txt("div", "slot-num" + (f ? " active" : ""), numStr));
+
+    if (f) {
+      slotEl.appendChild(txt("div", "slot-name", f.name));
+      slotEl.appendChild(txt("div", "slot-meta", matBadge(f).text + (f.is_recycled ? " · Recycled" : "")));
+      slotEl.title = f.name + " — " + f.material;
+      slotEl.onclick = function() {
+        // Reset filters so the card is visible
+        document.getElementById("search").value = "";
+        searchQuery = "";
+        document.querySelectorAll(".pill").forEach(function(b) { b.classList.remove("active"); });
+        document.querySelector('.pill[data-filter="all"]').classList.add("active");
+        activeFilter = "all";
+        render();
+        // Find this filament in the freshly built lbData
+        const idx = lbData.indexOf(f);
+        if (idx >= 0) openLb(idx);
+      };
+    } else {
+      slotEl.appendChild(txt("div", "slot-name empty", "Empty"));
+      slotEl.appendChild(txt("div", "slot-meta", "—"));
+    }
+
+    slotsEl.appendChild(slotEl);
+  }
 }
 
-function updateLightbox() {
-  if (!currentLbItems.length) return;
-  lbImg.src = currentLbItems[lbIndex].src;
-  lbCaption.textContent = currentLbItems[lbIndex].name;
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+var lbIdx = 0;
+const lb    = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+const lbNameEl = document.getElementById("lb-name");
+const lbMeta   = document.getElementById("lb-meta");
+
+function updateLb() {
+  if (!lbData.length) return;
+  const f = lbData[lbIdx];
+  lbImg.src = f.image;
+  lbImg.alt = f.name;
+  lbNameEl.textContent = f.name;
+
+  while (lbMeta.firstChild) lbMeta.removeChild(lbMeta.firstChild);
+  const chips = [
+    f.material,
+    f.weight  || null,
+    f.label   || null,
+    f["ams-slot"] != null ? "AMS Slot " + f["ams-slot"] : null,
+    f.spool ? (SPOOL_LABEL[f.spool] || f.spool) : null,
+  ].filter(Boolean);
+  chips.forEach(function(c, i) {
+    lbMeta.appendChild(txt("span", "lb-chip" + (i < 2 ? " hi" : ""), c));
+  });
 }
 
-function lbNext() { lbIndex = (lbIndex + 1) % currentLbItems.length; updateLightbox(); }
-function lbPrev() { lbIndex = (lbIndex - 1 + currentLbItems.length) % currentLbItems.length; updateLightbox(); }
+function openLb(idx) { lbIdx = idx; updateLb(); lb.showModal(); }
+function lbNext() { lbIdx = (lbIdx + 1) % lbData.length; updateLb(); }
+function lbPrev() { lbIdx = (lbIdx - 1 + lbData.length) % lbData.length; updateLb(); }
 
 document.getElementById("lb-next").onclick = lbNext;
 document.getElementById("lb-prev").onclick = lbPrev;
-document.getElementById("lb-close").onclick = () => lb.close();
-lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
-document.addEventListener("keydown", e => {
-  if (!lb.open) return;
-  if (e.key === "ArrowRight") lbNext();
-  if (e.key === "ArrowLeft") lbPrev();
+document.getElementById("lb-close").onclick = function() { lb.close(); };
+lb.addEventListener("click", function(e) { if (e.target === lb) lb.close(); });
+document.addEventListener("keydown", function(e) {
+  if (lb.open) {
+    if (e.key === "ArrowRight") lbNext();
+    if (e.key === "ArrowLeft")  lbPrev();
+    return;
+  }
+  if (e.key === "/" && e.target.tagName !== "INPUT") {
+    e.preventDefault();
+    document.getElementById("search").focus();
+  }
 });
 
-document.querySelectorAll(".filter-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+// ── Controls ──────────────────────────────────────────────────────────────────
+document.querySelectorAll(".pill").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll(".pill").forEach(function(b) { b.classList.remove("active"); });
     btn.classList.add("active");
-    render(btn.dataset.filter);
+    activeFilter = btn.dataset.filter;
+    render();
   });
 });
 
+document.getElementById("search").addEventListener("input", function(e) {
+  searchQuery = e.target.value;
+  render();
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+computeStats();
 render();
+renderAms();
 </script>
 </body>
 </html>
