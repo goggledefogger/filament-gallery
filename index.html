@@ -497,7 +497,7 @@ const FILAMENTS = [
   { name: "Fleck 'n Fire Red Glitter", material: "HTPLA", color: "Red", image: "images/protopasta-fleckn-fire-red-glitter-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Fleck 'n Forest Green Glitter", material: "HTPLA", color: "Green", image: "images/protopasta-fleckn-forest-green-glitter-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Galactic Empire Metallic Purple", material: "HTPLA", color: "Purple", image: "images/protopasta-galactic-empire-metallic-purple-htpla.jpg", weight: "50g", status: "in-ams", spool: "sample", used: 15.0, remaining: 35.0, count: 1, is_recycled: false },
-  { name: "Glitter's Mane Teal", material: "HTPLA", color: "Teal", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
+  { name: "Glitter's Mane Teal", material: "HTPLA", color: "Teal", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", status: "in-ams", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Green Glow-in-the-Dark White", material: "HTPLA", color: "White", image: "images/protopasta-green-glow-dark-white-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Lapis Lazuli", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-htpla.png", weight: "50g", status: "sealed", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false },
   { name: "Lapis Lazuli Glitter", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-glitter-htpla.png", weight: "500g", status: "sealed", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false },
@@ -545,7 +545,7 @@ function render(filter = "all") {
 
   let lbItems = [];
 
-  const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "low": "Low", "empty": "Empty", "on-the-way": "Inbound" };
+  const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "stored": "Stored", "low": "Low", "empty": "Empty", "on-the-way": "Inbound" };
   const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
 
   const SWATCH = {
