@@ -151,30 +151,31 @@
       box-shadow: var(--shadow-md);
     }
 
-    /* Progress ring wraps the disc, fill from --pct (0–100) */
+    /* Progress ring wraps the disc, fill from --pct (0–100), colored by --ring-color */
     .slot-ring {
       --pct: 100;
-      width: 78px; height: 78px;
+      --ring-color: var(--accent);
+      width: 80px; height: 80px;
       border-radius: 50%;
       background:
         conic-gradient(
-          var(--accent) 0deg,
-          var(--accent) calc(var(--pct) * 3.6deg),
-          var(--muted-soft) calc(var(--pct) * 3.6deg),
-          var(--muted-soft) 360deg
+          var(--ring-color) 0deg,
+          var(--ring-color) calc(var(--pct) * 3.6deg),
+          rgba(122, 108, 93, 0.18) calc(var(--pct) * 3.6deg),
+          rgba(122, 108, 93, 0.18) 360deg
         );
       display: flex; align-items: center; justify-content: center;
       position: relative;
-      box-shadow: 0 1px 3px rgba(28,22,16,0.10);
     }
     .slot-ring::before {
       content: "";
-      position: absolute; inset: 4px;
+      position: absolute; inset: 5px;
       background: var(--card);
       border-radius: 50%;
       z-index: 0;
     }
-    .slot-ring.empty { background: none; box-shadow: none; }
+    .ams-slot.loaded:hover .slot-ring { filter: brightness(1.06); }
+    .slot-ring.empty { background: none; }
     .slot-ring.empty::before { display: none; }
 
     /* Spool viewed end-on */
@@ -236,17 +237,52 @@
       color: var(--muted); text-transform: uppercase;
       font-weight: 600;
     }
+
+    /* Weight readout — the key data for each slot */
+    .slot-weight {
+      display: flex; align-items: baseline; justify-content: center;
+      gap: 3px; margin-top: 2px;
+    }
+    .slot-weight-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 700;
+      color: var(--text); line-height: 0.9;
+      letter-spacing: -0.02em;
+    }
+    .slot-weight-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; font-weight: 600;
+      color: var(--text); letter-spacing: 0.04em;
+    }
+    .slot-weight-of {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.54rem; color: var(--muted);
+      letter-spacing: 0.1em; margin-left: 4px;
+    }
+    .slot-weight-placeholder {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: var(--border-strong);
+      letter-spacing: 0.1em;
+    }
+
     .slot-meta {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.52rem; letter-spacing: 0.14em;
+      font-size: 0.5rem; letter-spacing: 0.16em;
       color: var(--muted); text-transform: uppercase;
+      font-weight: 600;
+      padding: 2px 7px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
     }
+    .slot-meta.rpla { color: #3a8a4a; border-color: rgba(58,138,74,0.3); background: rgba(58,138,74,0.06); }
 
     @media (max-width: 560px) {
       .ams-slots { gap: 8px; }
       .ams-slot { padding: 14px 6px 12px; gap: 8px; }
-      .slot-disc { width: 48px; height: 48px; }
+      .slot-ring { width: 64px; height: 64px; }
+      .slot-disc { width: 50px; height: 50px; }
       .slot-name { font-size: 0.62rem; }
+      .slot-weight-num { font-size: 1.15rem; }
       .slot-meta { display: none; }
     }
 
@@ -990,6 +1026,14 @@ function render() {
 }
 
 // ── AMS Bay visualization ─────────────────────────────────────────────────────
+function formatWeight(g) {
+  if (g >= 1000) {
+    const kg = g / 1000;
+    return { num: (kg >= 10 ? kg.toFixed(0) : kg.toFixed(1)), unit: "kg" };
+  }
+  return { num: Math.round(g).toString(), unit: "g" };
+}
+
 function renderAms() {
   const slotsEl = document.getElementById("ams-slots");
   const bay = [null, null, null, null];
@@ -1010,32 +1054,57 @@ function renderAms() {
     const f = bay[i];
     const slotEl = mk("div", f ? "ams-slot loaded" : "ams-slot empty");
 
-    const disc = mk("div", f ? "slot-disc" : "slot-disc empty");
-    if (f) disc.style.background = swatchFor(f).orb;
-    slotEl.appendChild(disc);
+    // Ring wrapper with disc inside
+    const ring = mk("div", f ? "slot-ring" : "slot-ring empty");
+    if (f) {
+      const sw = swatchFor(f);
+      const total = parseInt(f.weight) || 0;
+      const pct = total > 0 ? Math.max(0, Math.min(100, (f.remaining / total) * 100)) : 100;
+      ring.style.setProperty("--pct", pct.toFixed(1));
+      ring.style.setProperty("--ring-color", sw.solid);
+      const disc = mk("div", "slot-disc");
+      disc.style.background = sw.orb;
+      ring.appendChild(disc);
+    } else {
+      ring.appendChild(mk("div", "slot-disc empty"));
+    }
+    slotEl.appendChild(ring);
 
     const numStr = (i + 1).toString().padStart(2, "0");
     slotEl.appendChild(txt("div", "slot-num" + (f ? " active" : ""), numStr));
 
     if (f) {
       slotEl.appendChild(txt("div", "slot-name", f.name));
-      slotEl.appendChild(txt("div", "slot-meta", matBadge(f).text + (f.is_recycled ? " · Recycled" : "")));
-      slotEl.title = f.name + " — " + f.material;
+
+      // Weight readout — the key data
+      const total = parseInt(f.weight) || 0;
+      const weight = mk("div", "slot-weight");
+      const fmt = formatWeight(f.remaining);
+      weight.appendChild(txt("span", "slot-weight-num", fmt.num));
+      weight.appendChild(txt("span", "slot-weight-unit", fmt.unit));
+      if (f.used > 0 && total > 0) {
+        const totalFmt = formatWeight(total);
+        weight.appendChild(txt("span", "slot-weight-of", "of " + totalFmt.num + totalFmt.unit));
+      }
+      slotEl.appendChild(weight);
+
+      const mb = matBadge(f);
+      slotEl.appendChild(txt("div", "slot-meta" + (f.is_recycled ? " rpla" : ""), mb.text));
+
+      slotEl.title = f.name + " — " + Math.round(f.remaining) + "g of " + (total || "?") + "g remaining";
       slotEl.onclick = function() {
-        // Reset filters so the card is visible
         document.getElementById("search").value = "";
         searchQuery = "";
         document.querySelectorAll(".pill").forEach(function(b) { b.classList.remove("active"); });
         document.querySelector('.pill[data-filter="all"]').classList.add("active");
         activeFilter = "all";
         render();
-        // Find this filament in the freshly built lbData
         const idx = lbData.indexOf(f);
         if (idx >= 0) openLb(idx);
       };
     } else {
       slotEl.appendChild(txt("div", "slot-name empty", "Empty"));
-      slotEl.appendChild(txt("div", "slot-meta", "—"));
+      slotEl.appendChild(txt("div", "slot-weight-placeholder", "—"));
     }
 
     slotsEl.appendChild(slotEl);
