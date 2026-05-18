@@ -329,6 +329,7 @@
     .status-mark.in-ams      { color: #4fc3f7; }
     .status-mark.open        { color: #b07ef8; }
     .status-mark.sealed      { color: #6b6b85; }
+    .status-mark.stored      { color: #5e8da6; }
     .status-mark.low         { color: #fb923c; }
     .status-mark.empty       { color: #3f3f4a; }
     .status-mark.on-the-way  { color: #c6a8fc; }
@@ -471,7 +472,8 @@
   <button class="filter-btn" data-filter="PLA">PLA</button>
   <button class="filter-btn" data-filter="HTPLA">HTPLA</button>
   <button class="filter-btn" data-filter="PETG">PETG</button>
-  <button class="filter-btn" data-filter="in-transit">In Transit</button>
+  <button class="filter-btn" data-filter="in-ams">In AMS</button>
+  <button class="filter-btn" data-filter="inbound">Inbound</button>
 </div>
 
 <div id="gallery"></div>
@@ -507,7 +509,7 @@ const FILAMENTS = [
   { name: "Tropical Punk Green", material: "HTPLA", color: "Green", image: "images/protopasta-tropical-punk-green-htpla.png", weight: "500g", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
   { name: "Winter Blue Glitter Flake", material: "HTPLA", color: "Blue", image: "images/protopasta-winter-blue-glitter-flake-htpla.jpg", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
   { name: "Black PETG", material: "PETG", color: "Black", image: "images/protopasta-black-petg.jpg", weight: "1000g", spool: "full", used: 111.32, remaining: 888.6800000000001, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": null, storage: "desiccant", remaining_state: "ok", label: "Stored" },
-  { name: "Black Recycled", material: "PLA", color: "Black", image: "images/protopasta-black-recycled-pla.jpg", weight: "2000g", spool: "full", used: 594.56, remaining: 1405.44, count: 2, is_recycled: true, delivery: "received", seal: "opened", "ams-slot": null, storage: "desiccant", remaining_state: "ok", label: "Stored" },
+  { name: "Black Recycled", material: "PLA", color: "Black", image: "images/protopasta-black-recycled-pla.jpg", weight: "2000g", spool: "full", used: 594.56, remaining: 1405.44, count: 2, is_recycled: true, delivery: "received", seal: "opened", "ams-slot": 2, storage: null, remaining_state: "ok", label: "In AMS Slot 2" },
   { name: "Brown", material: "PLA", color: "Brown", image: "images/protopasta-chocolate-eruption-brown-htpla.png", weight: "50g", spool: "sample", used: 30.0, remaining: 20.0, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": null, storage: "bench", remaining_state: "low", label: "Low" },
   { name: "Natural", material: "PLA", color: "Natural", image: "images/protopasta-natural-pla.jpg", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
   { name: "Orange (bundled with printer)", material: "PLA", color: "Orange", image: "images/bambu-lab-orange-pla.webp", weight: "1000g", spool: "full", used: 500.0, remaining: 500.0, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": null, storage: "bench", remaining_state: "ok", label: "Open" },
@@ -522,6 +524,16 @@ const FILAMENTS = [
 
 const BADGE = { PLA: "badge-pla", HTPLA: "badge-htpla", PETG: "badge-petg" };
 
+// Map a precomputed gallery label (from the publish script) to its CSS class.
+// Labels come from publish-filament-gallery.py, derived from the five
+// orthogonal state fields. This mapping just picks the swatch color.
+function markClass(label) {
+  if (!label) return "";
+  if (label.startsWith("In AMS")) return "in-ams";
+  return { "Inbound": "on-the-way", "Sealed": "sealed", "Open": "open",
+           "Stored": "stored", "Low": "low", "Empty": "empty" }[label] || "";
+}
+
 function render(filter = "all") {
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
@@ -529,10 +541,15 @@ function render(filter = "all") {
   const inHandGroups = {};
   const inTransit = [];
   FILAMENTS.forEach(f => {
-    const onTheWay = f.status === "on-the-way";
-    if (filter === "in-transit") {
+    const onTheWay = f.delivery === "on-the-way";
+    if (filter === "inbound") {
       if (!onTheWay) return;
       inTransit.push(f);
+      return;
+    }
+    if (filter === "in-ams") {
+      if (f["ams-slot"] == null) return;
+      (inHandGroups[f.material] = inHandGroups[f.material] || []).push(f);
       return;
     }
     if (filter !== "all" && f.material !== filter) return;
@@ -545,7 +562,6 @@ function render(filter = "all") {
 
   let lbItems = [];
 
-  const STATUS_LABELS = { "in-ams": "In AMS", "open": "Open", "sealed": "Sealed", "stored": "Stored", "low": "Low", "empty": "Empty", "on-the-way": "Inbound" };
   const SPOOL_LABELS = { "full": "Full spool", "sample": "Sample", "remnant": "Remnant" };
 
   const SWATCH = {
@@ -573,12 +589,13 @@ function render(filter = "all") {
   const ICON_COIL = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>`;
 
   function buildCard(f) {
-      const onTheWay = f.status === "on-the-way";
+      const onTheWay = f.delivery === "on-the-way";
       const card = document.createElement("div");
       card.className = onTheWay ? "card on-the-way" : "card";
 
-      const statusMark = f.status ? `<span class="status-mark ${f.status}"></span>` : "";
-      const statusLabel = f.status ? (STATUS_LABELS[f.status] || f.status) : "";
+      const mc = markClass(f.label);
+      const statusMark = mc ? `<span class="status-mark ${mc}"></span>` : "";
+      const statusLabel = f.label || "";
       const weightLabel = f.weight || "";
       const spoolLabel = f.spool ? (SPOOL_LABELS[f.spool] || f.spool) : "";
       // detail parts now just show spool type since weight is on the icon badge
