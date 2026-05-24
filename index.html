@@ -722,7 +722,7 @@
   <div class="count-line"></div>
 </div>
 <div class="count-footer count-footer-sub">
-  <span class="count-text count-text-sub">Last updated <!-- LAST-UPDATED -->2026-05-22<!-- /LAST-UPDATED --></span>
+  <span class="count-text count-text-sub">Last updated <!-- LAST-UPDATED -->2026-05-24<!-- /LAST-UPDATED --></span>
 </div>
 
 <dialog id="lightbox">
@@ -753,7 +753,7 @@ const FILAMENTS = [
   { name: "Glitter's Mane Teal", material: "HTPLA", color: "Teal", image: "images/protopasta-glitters-mane-teal-htpla.jpg", weight: "50g", spool: "sample", used: 8.0, remaining: 42.0, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": null, storage: "bench", remaining_state: "ok", label: "Open" },
   { name: "Green Glow-in-the-Dark White", material: "HTPLA", color: "White", image: "images/protopasta-green-glow-dark-white-htpla.png", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
   { name: "Lapis Lazuli", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-htpla.png", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
-  { name: "Lapis Lazuli Glitter", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-glitter-htpla.png", weight: "500g", spool: "full", used: 19.48, remaining: 480.52, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": 1, storage: null, remaining_state: "ok", label: "In AMS Slot 1" },
+  { name: "Lapis Lazuli Glitter", material: "HTPLA", color: "Blue", image: "images/protopasta-lapis-lazuli-glitter-htpla.png", weight: "500g", spool: "full", used: 106.82000000000001, remaining: 393.18, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": 1, storage: null, remaining_state: "ok", label: "In AMS Slot 1" },
   { name: "Matte Fiber Black", material: "HTPLA", color: "Black", image: "images/protopasta-matte-fiber-black-htpla.jpg", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
   { name: "Pretty in Pink Pearl", material: "HTPLA", color: "Pink", image: "images/protopasta-pretty-in-pink-pearl-htpla.jpg", weight: "50g", spool: "sample", used: 19.48, remaining: 30.52, count: 1, is_recycled: false, delivery: "received", seal: "opened", "ams-slot": 3, storage: null, remaining_state: "ok", label: "In AMS Slot 3" },
   { name: "Red Hot Cinnamon", material: "HTPLA", color: "Red", image: "images/protopasta-red-hot-cinnamon-htpla.png", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed" },
@@ -1039,6 +1039,19 @@ function formatWeight(g) {
   return { num: Math.round(g).toString(), unit: "g" };
 }
 
+// AMS bay shows the loaded spool only — when an entry covers multiple physical
+// spools (count > 1), remaining/total need to reflect the single loaded spool,
+// not the aggregate across all spools.
+function loadedSpoolStats(f) {
+  const total = parseInt(f.weight) || 0;
+  const count = f.count || 1;
+  if (count <= 1 || !total) return { remaining: f.remaining, total };
+  const spool = total / count;
+  if (f.remaining <= 0) return { remaining: 0, total: spool };
+  const mod = f.remaining % spool;
+  return { remaining: mod === 0 ? spool : mod, total: spool };
+}
+
 function renderAms() {
   const slotsEl = document.getElementById("ams-slots");
   const bay = [null, null, null, null];
@@ -1063,8 +1076,8 @@ function renderAms() {
     const ring = mk("div", f ? "slot-ring" : "slot-ring empty");
     if (f) {
       const sw = swatchFor(f);
-      const total = parseInt(f.weight) || 0;
-      const pct = total > 0 ? Math.max(0, Math.min(100, (f.remaining / total) * 100)) : 100;
+      const spool = loadedSpoolStats(f);
+      const pct = spool.total > 0 ? Math.max(0, Math.min(100, (spool.remaining / spool.total) * 100)) : 100;
       ring.style.setProperty("--pct", pct.toFixed(1));
       ring.style.setProperty("--ring-color", sw.solid);
       const disc = mk("div", "slot-disc");
@@ -1081,14 +1094,14 @@ function renderAms() {
     if (f) {
       slotEl.appendChild(txt("div", "slot-name", f.name));
 
-      // Weight readout — the key data
-      const total = parseInt(f.weight) || 0;
+      // Weight readout — the loaded spool only (not aggregate across spools)
+      const spool = loadedSpoolStats(f);
       const weight = mk("div", "slot-weight");
-      const fmt = formatWeight(f.remaining);
+      const fmt = formatWeight(spool.remaining);
       weight.appendChild(txt("span", "slot-weight-num", fmt.num));
       weight.appendChild(txt("span", "slot-weight-unit", fmt.unit));
-      if (f.used > 0 && total > 0) {
-        const totalFmt = formatWeight(total);
+      if (f.used > 0 && spool.total > 0) {
+        const totalFmt = formatWeight(spool.total);
         weight.appendChild(txt("span", "slot-weight-of", "of " + totalFmt.num + totalFmt.unit));
       }
       slotEl.appendChild(weight);
@@ -1096,7 +1109,8 @@ function renderAms() {
       const mb = matBadge(f);
       slotEl.appendChild(txt("div", "slot-meta" + (f.is_recycled ? " rpla" : ""), mb.text));
 
-      slotEl.title = f.name + " — " + Math.round(f.remaining) + "g of " + (total || "?") + "g remaining";
+      slotEl.title = f.name + " — " + Math.round(spool.remaining) + "g of " + (spool.total || "?") + "g remaining on loaded spool"
+        + (f.count > 1 ? " (" + Math.round(f.remaining) + "g total across " + f.count + " spools)" : "");
       slotEl.onclick = function() {
         document.getElementById("search").value = "";
         searchQuery = "";
