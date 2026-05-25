@@ -304,6 +304,18 @@
         );
     }
 
+    .slot-end-mark {
+      position: absolute;
+      width: 2px; height: 10px;
+      background: rgba(28, 22, 16, 0.7);
+      top: 0; left: 50%;
+      margin-left: -1px;
+      transform-origin: 50% 40px;
+      border-radius: 1px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
     @keyframes ring-drain {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.15; }
@@ -1337,6 +1349,9 @@ function renderAms() {
           var endRemaining = Math.max(0, spool.remaining - usage);
           var endPct = (endRemaining / spool.total) * 100;
           ring.style.setProperty("--end-pct", endPct.toFixed(1));
+          var mark = mk("div", "slot-end-mark");
+          mark.style.transform = "rotate(" + (endPct * 3.6) + "deg)";
+          ring.appendChild(mark);
         } else {
           ring.style.setProperty("--end-pct", pct.toFixed(1));
         }
