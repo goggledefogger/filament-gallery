@@ -97,6 +97,79 @@
       flex-shrink: 0;
     }
 
+    /* ── PRINT HERO ──────────────────────────────────────────────────────────── */
+    .print-hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .print-hero-img-wrap {
+      flex: 0 0 160px;
+      height: 120px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      border: 2px solid var(--accent);
+      position: relative;
+    }
+    @keyframes hero-border-pulse {
+      0%, 100% { border-color: var(--accent); }
+      50% { border-color: rgba(200,94,42,0.35); }
+    }
+    .print-hero-img-wrap { animation: hero-border-pulse 2.4s ease-in-out infinite; }
+    .print-hero-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .print-hero-placeholder {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .print-hero-placeholder svg { color: var(--muted); opacity: 0.5; }
+    .print-hero-info { flex: 1; min-width: 0; }
+    .print-hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; font-weight: 700;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent);
+      display: flex; align-items: center; gap: 7px;
+      margin-bottom: 6px;
+    }
+    @keyframes hero-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .print-hero-eyebrow::before {
+      content: ""; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: hero-dot 1.4s ease-in-out infinite;
+    }
+    .print-hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 600; line-height: 1.1;
+      color: var(--text); letter-spacing: -0.01em;
+    }
+    .print-hero-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; letter-spacing: 0.16em;
+      color: var(--muted); text-transform: uppercase;
+      margin-top: 8px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .print-hero-img-wrap { animation: none; border-color: var(--accent); }
+      .print-hero-eyebrow::before { animation: none; }
+    }
+    @media (max-width: 560px) {
+      .print-hero { flex-direction: column; align-items: stretch; gap: 14px; padding: 18px 16px; }
+      .print-hero-img-wrap { flex: none; width: 100%; height: 140px; }
+    }
+
     /* ── AMS BAY ────────────────────────────────────────────────────────────── */
     .ams-bay {
       max-width: 1200px;
@@ -775,6 +848,8 @@
   </div>
 </div>
 
+<div id="print-hero"></div>
+
 <section class="ams-bay">
   <div class="ams-bay-head">
     <span class="ams-bay-label">AMS Bay</span>
@@ -859,7 +934,7 @@ const FILAMENTS = [
   { name: "White", material: "PLA", color: "White", image: "images/protopasta-white-pla.jpg", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed", loaded_weight: null, loaded_remaining: null },
   { name: "Support for PLA/PETG", material: "Support", color: "White", image: null, weight: "500g", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed", loaded_weight: null, loaded_remaining: null },
 ];
-const PRINT_STATUS = { printing: true, project: "Churu Box v4 Meeko", filaments: [{ slot: 3, usage_g: 14 }, { slot: 4, usage_g: 63 }] };
+const PRINT_STATUS = { printing: true, project: "Churu Box v4 Meeko", image: "images/print-status.jpeg", filaments: [{ slot: 3, usage_g: 14 }, { slot: 4, usage_g: 63 }] };
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SWATCHES = {
@@ -1158,6 +1233,54 @@ function printingSlotUsage(slotNum) {
   return null;
 }
 
+// ── Print Hero ───────────────────────────────────────────────────────────────
+function renderPrintHero() {
+  var el = document.getElementById("print-hero");
+  while (el.firstChild) el.removeChild(el.firstChild);
+  if (!PRINT_STATUS || !PRINT_STATUS.printing) return;
+
+  el.className = "print-hero";
+
+  var imgWrap = mk("div", "print-hero-img-wrap");
+  if (PRINT_STATUS.image) {
+    var img = mk("img", "print-hero-img");
+    img.src = PRINT_STATUS.image;
+    img.alt = PRINT_STATUS.project;
+    imgWrap.appendChild(img);
+  } else {
+    var ph = mk("div", "print-hero-placeholder");
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "36");
+    svg.setAttribute("height", "36");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "1.5");
+    var rect1 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect1.setAttribute("x","6"); rect1.setAttribute("y","2"); rect1.setAttribute("width","12"); rect1.setAttribute("height","6"); rect1.setAttribute("rx","1");
+    var rect2 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect2.setAttribute("x","4"); rect2.setAttribute("y","8"); rect2.setAttribute("width","16"); rect2.setAttribute("height","10"); rect2.setAttribute("rx","1");
+    var rect3 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect3.setAttribute("x","8"); rect3.setAttribute("y","14"); rect3.setAttribute("width","8"); rect3.setAttribute("height","6"); rect3.setAttribute("rx","1");
+    svg.appendChild(rect1); svg.appendChild(rect2); svg.appendChild(rect3);
+    ph.appendChild(svg);
+    imgWrap.appendChild(ph);
+  }
+  el.appendChild(imgWrap);
+
+  var info = mk("div", "print-hero-info");
+  info.appendChild(txt("div", "print-hero-eyebrow", "Now Printing"));
+  info.appendChild(txt("div", "print-hero-title", PRINT_STATUS.project));
+
+  var totalG = 0;
+  PRINT_STATUS.filaments.forEach(function(f) { totalG += f.usage_g || 0; });
+  var slotCount = PRINT_STATUS.filaments.length;
+  var sub = totalG + "g projected across " + slotCount + " filament" + (slotCount !== 1 ? "s" : "");
+  info.appendChild(txt("div", "print-hero-sub", sub));
+
+  el.appendChild(info);
+}
+
 function renderAms() {
   const slotsEl = document.getElementById("ams-slots");
   const statusEl = document.getElementById("ams-status");
@@ -1346,6 +1469,7 @@ document.getElementById("search").addEventListener("input", function(e) {
 // ── Init ──────────────────────────────────────────────────────────────────────
 computeStats();
 render();
+renderPrintHero();
 renderAms();
 </script>
 </body>
