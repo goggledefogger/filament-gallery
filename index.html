@@ -151,6 +151,59 @@
       box-shadow: var(--shadow-md);
     }
 
+    /* ── PRINTING PULSE ─────────────────────────────────────────────────────── */
+    @keyframes ams-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--pulse-color, rgba(200,94,42,0.35)), var(--shadow-sm); }
+      50% { box-shadow: 0 0 18px 4px var(--pulse-color, rgba(200,94,42,0.25)), var(--shadow-md); }
+    }
+    .ams-slot.printing {
+      animation: ams-pulse 2.4s ease-in-out infinite;
+      border-color: var(--accent);
+    }
+    .ams-slot.printing:hover { animation: none; }
+
+    .slot-projection {
+      display: flex; align-items: baseline; justify-content: center;
+      gap: 4px; margin-top: 2px;
+    }
+    .slot-proj-arrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; color: var(--accent); font-weight: 700;
+    }
+    .slot-proj-end {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--accent); line-height: 0.9;
+      letter-spacing: -0.02em;
+    }
+    .slot-proj-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.54rem; font-weight: 600;
+      color: var(--accent); letter-spacing: 0.04em;
+    }
+
+    .ams-bay-printing {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    @keyframes print-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .ams-bay-printing::before {
+      content: ""; width: 7px; height: 7px;
+      background: var(--accent); border-radius: 50%;
+      animation: print-dot 1.4s ease-in-out infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ams-slot.printing { animation: none; border-color: var(--accent); box-shadow: 0 0 8px 2px rgba(200,94,42,0.2), var(--shadow-sm); }
+      .ams-bay-printing::before { animation: none; opacity: 1; }
+    }
+
     /* Progress ring wraps the disc, fill from --pct (0–100), colored by --ring-color */
     .slot-ring {
       --pct: 100;
@@ -771,6 +824,7 @@ const FILAMENTS = [
   { name: "White", material: "PLA", color: "White", image: "images/protopasta-white-pla.jpg", weight: "50g", spool: "sample", used: 0, remaining: 50.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed", loaded_weight: null, loaded_remaining: null },
   { name: "Support for PLA/PETG", material: "Support", color: "White", image: null, weight: "500g", spool: "full", used: 0, remaining: 500.0, count: 1, is_recycled: false, delivery: "received", seal: "sealed", "ams-slot": null, storage: null, remaining_state: null, label: "Sealed", loaded_weight: null, loaded_remaining: null },
 ];
+const PRINT_STATUS = { printing: true, project: "Churu Box v4 Meeko", filaments: [{ slot: 3, usage_g: 19 }, { slot: 4, usage_g: 5 }] };
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SWATCHES = {
@@ -1061,8 +1115,17 @@ function loadedSpoolStats(f) {
   return { remaining: mod === 0 ? spool : mod, total: spool };
 }
 
+function printingSlotUsage(slotNum) {
+  if (!PRINT_STATUS || !PRINT_STATUS.printing) return null;
+  for (var i = 0; i < PRINT_STATUS.filaments.length; i++) {
+    if (PRINT_STATUS.filaments[i].slot === slotNum) return PRINT_STATUS.filaments[i].usage_g;
+  }
+  return null;
+}
+
 function renderAms() {
   const slotsEl = document.getElementById("ams-slots");
+  const statusEl = document.getElementById("ams-status");
   const bay = [null, null, null, null];
   let loaded = 0;
   FILAMENTS.forEach(function(f) {
@@ -1073,13 +1136,29 @@ function renderAms() {
     }
   });
 
-  document.getElementById("ams-status").textContent = loaded + " of 4 loaded";
+  // AMS bay header — show print status when active
+  if (PRINT_STATUS && PRINT_STATUS.printing) {
+    statusEl.textContent = "";
+    statusEl.className = "ams-bay-printing";
+    statusEl.textContent = "Printing — " + PRINT_STATUS.project;
+  } else {
+    statusEl.textContent = loaded + " of 4 loaded";
+    statusEl.className = "ams-bay-status";
+  }
 
   while (slotsEl.firstChild) slotsEl.removeChild(slotsEl.firstChild);
 
   for (let i = 0; i < 4; i++) {
     const f = bay[i];
-    const slotEl = mk("div", f ? "ams-slot loaded" : "ams-slot empty");
+    const slotNum = i + 1;
+    const usage = printingSlotUsage(slotNum);
+    const isPrinting = usage !== null;
+
+    const slotEl = mk("div", f ? "ams-slot loaded" + (isPrinting ? " printing" : "") : "ams-slot empty");
+    if (isPrinting && f) {
+      const sw = swatchFor(f);
+      slotEl.style.setProperty("--pulse-color", sw.solid ? sw.solid.replace(")", ",0.35)").replace("rgb", "rgba") : "rgba(200,94,42,0.35)");
+    }
 
     // Ring wrapper with disc inside
     const ring = mk("div", f ? "slot-ring" : "slot-ring empty");
@@ -1089,6 +1168,14 @@ function renderAms() {
       const pct = spool.total > 0 ? Math.max(0, Math.min(100, (spool.remaining / spool.total) * 100)) : 100;
       ring.style.setProperty("--pct", pct.toFixed(1));
       ring.style.setProperty("--ring-color", sw.solid);
+
+      // Show projected end fill as a second ghost ring behind the current ring
+      if (isPrinting && usage > 0 && spool.total > 0) {
+        const endRemaining = Math.max(0, spool.remaining - usage);
+        const endPct = (endRemaining / spool.total) * 100;
+        ring.style.setProperty("--end-pct", endPct.toFixed(1));
+      }
+
       const disc = mk("div", "slot-disc");
       disc.style.background = sw.orb;
       ring.appendChild(disc);
@@ -1097,7 +1184,7 @@ function renderAms() {
     }
     slotEl.appendChild(ring);
 
-    const numStr = (i + 1).toString().padStart(2, "0");
+    const numStr = slotNum.toString().padStart(2, "0");
     slotEl.appendChild(txt("div", "slot-num" + (f ? " active" : ""), numStr));
 
     if (f) {
@@ -1115,10 +1202,22 @@ function renderAms() {
       }
       slotEl.appendChild(weight);
 
+      // Projected usage when printing
+      if (isPrinting && usage > 0) {
+        const endRemaining = Math.max(0, spool.remaining - usage);
+        const proj = mk("div", "slot-projection");
+        proj.appendChild(txt("span", "slot-proj-arrow", "→"));
+        const endFmt = formatWeight(endRemaining);
+        proj.appendChild(txt("span", "slot-proj-end", endFmt.num));
+        proj.appendChild(txt("span", "slot-proj-unit", endFmt.unit));
+        slotEl.appendChild(proj);
+      }
+
       const mb = matBadge(f);
       slotEl.appendChild(txt("div", "slot-meta" + (f.is_recycled ? " rpla" : ""), mb.text));
 
       slotEl.title = f.name + " — " + Math.round(spool.remaining) + "g of " + (spool.total || "?") + "g remaining on loaded spool"
+        + (isPrinting ? " (printing: -" + usage + "g projected)" : "")
         + (f.count > 1 ? " (" + Math.round(f.remaining) + "g total across " + f.count + " spools)" : "");
       slotEl.onclick = function() {
         document.getElementById("search").value = "";
