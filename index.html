@@ -22,6 +22,12 @@
       --muted:        #7a6c5d;
       --muted-soft:   rgba(122, 108, 93, 0.28);
       --radius:       9px;
+      --space-xs:     6px;
+      --space-sm:     8px;
+      --space-md:     12px;
+      --space-lg:     16px;
+      --space-xl:     24px;
+      --page-padding: var(--space-xl);
       --shadow-sm:    0 1px 3px rgba(28,22,16,0.07), 0 1px 2px rgba(28,22,16,0.05);
       --shadow-md:    0 4px 14px rgba(28,22,16,0.10), 0 2px 4px rgba(28,22,16,0.07);
       --shadow-lg:    0 24px 60px rgba(28,22,16,0.22), 0 8px 24px rgba(28,22,16,0.12);
@@ -460,7 +466,7 @@
     }
     @media (max-width: 480px) {
       .ams-slots { grid-template-columns: repeat(2, 1fr); }
-      .ams-bay-head { flex-wrap: wrap; gap: 8px; }
+      .ams-bay-head { flex-wrap: wrap; gap: var(--space-sm); }
       .ams-bay-rule { display: none; }
       .ams-bay-status { width: 100%; }
     }
@@ -824,18 +830,19 @@
 
     /* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
-      header, .stats-bar, .controls, .section-head, .count-footer { padding-left: 16px; padding-right: 16px; }
-      .grid { padding: 0 16px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+      --page-padding: var(--space-lg);
+      header, .stats-bar, .controls, .section-head, .count-footer { padding-left: var(--page-padding); padding-right: var(--page-padding); }
+      .grid { padding: 0 var(--page-padding); grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-md); }
       .search-wrap { flex: 1 1 100%; }
       .stat-value { font-size: 1.3rem; }
-      .stats-bar { flex-wrap: wrap; gap: 6px 0; }
+      .stats-bar { flex-wrap: wrap; gap: var(--space-xs) 0; }
       .stat-divider { display: none; }
-      .stat { padding-right: 16px; }
+      .stat { padding-right: var(--page-padding); }
     }
     @media (max-width: 380px) {
       .grid { grid-template-columns: 1fr 1fr; }
-      .stat-divider { margin-right: 14px; }
-      .stat { padding-right: 14px; }
+      .stat-divider { margin-right: var(--space-lg); }
+      .stat { padding-right: var(--space-lg); }
     }
   </style>
 </head>
