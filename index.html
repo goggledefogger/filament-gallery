@@ -458,6 +458,12 @@
       .slot-weight-num { font-size: 1.15rem; }
       .slot-meta { display: none; }
     }
+    @media (max-width: 480px) {
+      .ams-slots { grid-template-columns: repeat(2, 1fr); }
+      .ams-bay-head { flex-wrap: wrap; gap: 8px; }
+      .ams-bay-rule { display: none; }
+      .ams-bay-status { width: 100%; }
+    }
 
     /* ── CONTROLS ───────────────────────────────────────────────────────────── */
     .controls {
