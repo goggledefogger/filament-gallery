@@ -830,7 +830,9 @@
 
     /* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
-      --page-padding: var(--space-lg);
+      /* A bare custom-property declaration inside @media (no selector) is invalid
+         CSS and silently dropped — it must live in a rule. :root re-scopes it. */
+      :root { --page-padding: var(--space-lg); }
       header, .stats-bar, .controls, .section-head, .count-footer { padding-left: var(--page-padding); padding-right: var(--page-padding); }
       .grid { padding: 0 var(--page-padding); grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-md); }
       .search-wrap { flex: 1 1 100%; }
